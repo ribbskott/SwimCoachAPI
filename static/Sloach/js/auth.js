@@ -1,38 +1,11 @@
 'use strict';
 
 angular.module('sloach')
-.controller('auth', '$cookies', function ($scope, $location, $cookies, AuthService) {
+.controller('auth', ['$cookies', function ($scope, $location, $cookies, AuthService) {
     $scope.title = 'sloach';
     $scope.isLoggedIn = false;
-    $scope.credentials = { email: "", password: "" };
-    $scope.errorMessage = "";
-    $scope.login = function () {
-        var loginPromise = AuthService.getUserSession($scope.credentials);
-        loginPromise.success(function (data, status, headers, config) {
-                        $cookies.put('sessiontoken', data.token);
-                        $scope.isLoggedIn = true;
-                      })
-                    .error(function (data, status, headers, config) {
-                        $scope.isLoggedIn = false;
-                        $scope.errorMessage = data;
-                        alert(data);
-                    });
-    };
-    $scope.signup = function () {
-        //alert(JSON.stringify(this.credentials));
-        var signupPromise =  AuthService.signup($scope.credentials);
 
-        signupPromise.success(function (data, status, headers, config) {
-                        $cookies.put('sessiontoken', data.token);
-                        $scope.isLoggedIn = true;
-                    })
-                    .error(function (data, status, headers, config) {
-                        $scope.errorMessage = data;
-                        $scope.isLoggedIn = false
-                    });
-
-    };
-});
+}]);
 
 angular.module('sloach').factory('AuthService', function (Base64, $http) {
     var self = this;
@@ -57,7 +30,7 @@ angular.module('sloach').factory('AuthService', function (Base64, $http) {
             },
 
             signup : function (credentials) {
-                var encoded = Base64.encode(credentials.username + ":" + credentials.password);
+                var encoded = Base64.encode(credentials.email + ":" + credentials.password);
 
                 $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
                 return $http.post('http://localhost:5000/signup', credentials);

@@ -22,8 +22,8 @@
                 <label>Email</label>
                 <input md-maxlength="72" type="email" name="email" ng-model="credentials.email" required>
                 <div ng-messages="signupForm.email.$error" ng-if="signupForm.email.$touched">
-                  <ng-message when="email" class="error">The email address is invalid</ng-message>
-                  <ng-message when="maxLength" class="error">The maximum length is 72 characters</ng-message>
+                  <div ng-message="required">The email address is required</div>
+                  <div ng-message="maxLength">The maximum length is 72 characters</div>
                 </div>
               </md-input-container>
               <md-input-container class="md-block md-icon-float">

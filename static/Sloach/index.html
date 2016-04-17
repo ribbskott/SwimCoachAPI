@@ -9,13 +9,15 @@
 <body ng-app="sloach" ng-cloak ng-controller="appCtrl">
 <md-toolbar scroll flex layout="row">
     <div class="md-toolbar-tools red">
-      <md-button  aria-label="login" ng-href="{{loginUrl}}" ui-sref="login">
+      <md-button ng-visible="!isLoggedIn" aria-label="login" ng-href="{{loginUrl}}" ui-sref="login">
         <span class="white">Login</span>
       </md-button>
-      <md-button  aria-label="signup" ng-href="{{signupUrl}}" ui-sref="signup">
+      <md-button ng-visible="!isLoggedIn" aria-label="signup" ng-href="{{signupUrl}}" ui-sref="signup">
         <span class="white">{{signupUrl}}</span>
       </md-button>
-
+        <md-button ng-visible="isLoggedIn" aria-label="myclub" ng-href="{{myclubUrl}}" ui-sref="myclub">
+            <span class="white">{{myclubUrl}}</span>
+        </md-button>
 
     </div>
 </md-toolbar>
