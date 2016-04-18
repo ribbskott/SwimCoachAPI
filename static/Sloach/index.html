@@ -12,39 +12,36 @@
 <md-toolbar scroll flex layout="row">
     <div class="md-toolbar-tools red">
      <md-button ng-show="isLoggedIn" ng-click="showMenu()" class="material-icons">menu</md-button>
-      <md-button ng-show="!isLoggedIn" aria-label="login" ng-href="{{loginUrl}}" ui-sref="login">
-        <span class="white">Login</span>
+      <md-button ng-show="!isLoggedIn" aria-label="Logga in" ng-href="{{loginUrl}}" ui-sref="login">
+        <span class="white">Logga in</span>
       </md-button>
-      <md-button ng-show="!isLoggedIn" aria-label="signup" ng-href="{{signupUrl}}" ui-sref="signup">
-        <span class="white">{{signupUrl}}</span>
+      <md-button ng-show="!isLoggedIn" aria-label="Bli medlem" click-Link="signup">
+        <span class="white">Bli medlem</span>
       </md-button>
-        <md-button ng-show="isLoggedIn" aria-label="myclub" ng-href="{{myclubUrl}}" ui-sref="myclub">
-            <span class="white">{{myclubUrl}}</span>
-        </md-button>
-
     </div>
 </md-toolbar>
-<section layout="row" flex>
+<section layout="row" ng-controller="mainMenuCtrl" flex>
     <md-sidenav
         class="md-sidenav-left"
         md-component-id="mainMenu"
-        md-is-locked-open="$mdMedia('gt-md')"
-        md-disable-backdrop
         md-whiteframe="4">
       <md-toolbar class="md-theme-indigo">
-        <h1 class="md-toolbar-tools">Menu</h1>
+        <h1 class="md-toolbar-tools"><md-button ng-show="!$mdMedia('md')" ng-click="close()" class="material-icons" hide-gt-md>keyboard_backspace</md-button></h1>
       </md-toolbar>
-      <md-content layout-padding ng-controller="mainMenuCtrl">
-        <md-button ng-click="close()" class="material-icons" hide-gt-md>keyboard_backspace</md-button>
-          <p hide-md show-gt-md>
-          This sidenav is locked open on your device. To go back to the default behavior,
-          narrow your display.
-        </p>
+      <md-content layout-padding >
+        <md-list flex>
+            <md-list-item ng-href="profile" ng-click="navigateProfile()" class="md-2-line" >
+                <img class="md-avatar" alt="" />
+                  <div class="md-list-item-text" layout="column">
+                    <h3>Klubben</h3>
+                    <h4>Visa klubbprofil</h4>
+                  </div>
+            </md-list-item>
+        </md-list>
       </md-content>
     </md-sidenav>
     <md-content flex layout-padding>
 
-      <div flex></div>
     </md-content>
     </section>
 <div ng-view></div>
@@ -61,9 +58,12 @@
 <script src="/static/Sloach/lib/angular-material.min.js"></script>
 
 <!-- Your application bootstrap  -->
-<script src="/static/Sloach/js/app.js"></script>
-<script src="/static/Sloach/js/auth.js"></script>
+<script src="/static/Sloach/js/controllers/app.js"></script>
+<script src="/static/Sloach/js/controllers/auth.js"></script>
+<script src="/static/Sloach/js/controllers/profile.js"></script>
 <script src="/static/Sloach/js/controllers/MainMenuCtrl.js"></script>
+<script src="/static/Sloach/js/services.js"></script>
+
 
 </body>
 </html>
