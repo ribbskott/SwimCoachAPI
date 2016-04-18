@@ -17,8 +17,8 @@ angular.module('sloach').factory('AuthService', function (Base64, $http) {
                 var encoded = Base64.encode(credentials.email + ':' + credentials.password);
 
                 $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
-                return $http.post('http://localhost:5000/login')
-                    .success(function (data, status, headers, config) {
+                return $http.post('http://localhost:5000/login');
+                    /*.success(function (data, status, headers, config) {
                         $cookies.put('sessiontoken', data.token);
                         self.isLoggedIn = true;
 
@@ -26,7 +26,7 @@ angular.module('sloach').factory('AuthService', function (Base64, $http) {
                     .error(function (data, status, headers, config) {
                         self.isLoggedIn = false;
                         self.errorMessage = data.message;
-                    });
+                    });*/
             },
 
             signup : function (credentials) {
@@ -34,14 +34,7 @@ angular.module('sloach').factory('AuthService', function (Base64, $http) {
 
                 $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
                 return $http.post('http://localhost:5000/signup', credentials);
-                    /*.success(function (data, status, headers, config) {
-                        $cookieStore.put('sessiontoken', data.token);
-                        isLoggedIn = true;
-                    })
-                    .error(function (data, status, headers, config) {
-                        console.log(data.error);
-                        errorMessage = data.error;
-                    });*/
+
             },
 
             logout : function () {

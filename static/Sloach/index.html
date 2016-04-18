@@ -4,23 +4,51 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!-- Angular Material style sheet -->
     <link rel="stylesheet" href="/static/Sloach/css/angular-material.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons"
+      rel="stylesheet">
     <base href="http://localhost:5000/static/Sloach/">
 </head>
 <body ng-app="sloach" ng-cloak ng-controller="appCtrl">
 <md-toolbar scroll flex layout="row">
     <div class="md-toolbar-tools red">
-      <md-button ng-visible="!isLoggedIn" aria-label="login" ng-href="{{loginUrl}}" ui-sref="login">
+     <md-button ng-show="isLoggedIn" class="material-icons">menu</md-button>
+      <md-button ng-show="!isLoggedIn" aria-label="login" ng-href="{{loginUrl}}" ui-sref="login">
         <span class="white">Login</span>
       </md-button>
-      <md-button ng-visible="!isLoggedIn" aria-label="signup" ng-href="{{signupUrl}}" ui-sref="signup">
+      <md-button ng-show="!isLoggedIn" aria-label="signup" ng-href="{{signupUrl}}" ui-sref="signup">
         <span class="white">{{signupUrl}}</span>
       </md-button>
-        <md-button ng-visible="isLoggedIn" aria-label="myclub" ng-href="{{myclubUrl}}" ui-sref="myclub">
+        <md-button ng-show="isLoggedIn" aria-label="myclub" ng-href="{{myclubUrl}}" ui-sref="myclub">
             <span class="white">{{myclubUrl}}</span>
         </md-button>
 
     </div>
 </md-toolbar>
+<section layout="row" flex>
+    <md-sidenav
+        class="md-sidenav-left"
+        md-component-id="left"
+        md-is-locked-open="$mdMedia('gt-md')"
+        md-disable-backdrop
+        md-whiteframe="4">
+      <md-toolbar class="md-theme-indigo">
+        <h1 class="md-toolbar-tools">Sidenav Left</h1>
+      </md-toolbar>
+      <md-content layout-padding ng-controller="appCtrl">
+        <md-button ng-click="close()" class="md-primary" hide-gt-md>
+          Close Sidenav Left
+        </md-button>
+        <p hide-md show-gt-md>
+          This sidenav is locked open on your device. To go back to the default behavior,
+          narrow your display.
+        </p>
+      </md-content>
+    </md-sidenav>
+    <md-content flex layout-padding>
+
+      <div flex></div>
+    </md-content>
+    </section>
 <div ng-view></div>
 
 <!-- Angular Material requires Angular.js Libraries -->
