@@ -11,7 +11,7 @@
 <body ng-app="sloach" ng-cloak ng-controller="appCtrl">
 <md-toolbar scroll flex layout="row">
     <div class="md-toolbar-tools red">
-     <md-button ng-show="isLoggedIn" class="material-icons">menu</md-button>
+     <md-button ng-show="isLoggedIn" ng-click="showMenu()" class="material-icons">menu</md-button>
       <md-button ng-show="!isLoggedIn" aria-label="login" ng-href="{{loginUrl}}" ui-sref="login">
         <span class="white">Login</span>
       </md-button>
@@ -27,18 +27,16 @@
 <section layout="row" flex>
     <md-sidenav
         class="md-sidenav-left"
-        md-component-id="left"
+        md-component-id="mainMenu"
         md-is-locked-open="$mdMedia('gt-md')"
         md-disable-backdrop
         md-whiteframe="4">
       <md-toolbar class="md-theme-indigo">
-        <h1 class="md-toolbar-tools">Sidenav Left</h1>
+        <h1 class="md-toolbar-tools">Menu</h1>
       </md-toolbar>
-      <md-content layout-padding ng-controller="appCtrl">
-        <md-button ng-click="close()" class="md-primary" hide-gt-md>
-          Close Sidenav Left
-        </md-button>
-        <p hide-md show-gt-md>
+      <md-content layout-padding ng-controller="mainMenuCtrl">
+        <md-button ng-click="close()" class="material-icons" hide-gt-md>keyboard_backspace</md-button>
+          <p hide-md show-gt-md>
           This sidenav is locked open on your device. To go back to the default behavior,
           narrow your display.
         </p>
@@ -61,10 +59,11 @@
 <script src="/static/Sloach/lib/angular-cookies.min.js"></script>
 <!-- Angular Material Library -->
 <script src="/static/Sloach/lib/angular-material.min.js"></script>
+
+<!-- Your application bootstrap  -->
 <script src="/static/Sloach/js/app.js"></script>
 <script src="/static/Sloach/js/auth.js"></script>
-<!-- Your application bootstrap  -->
-
+<script src="/static/Sloach/js/controllers/MainMenuCtrl.js"></script>
 
 </body>
 </html>
