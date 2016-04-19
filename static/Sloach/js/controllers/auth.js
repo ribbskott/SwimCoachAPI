@@ -13,13 +13,14 @@ angular.module('sloach').factory('AuthService', function (Base64, $http) {
             isLoggedIn : false,
             errorMessage :"",
 
-            getUserSession : function (credentials) {
+            getUserSession: function (credentials) {
                 var encoded = Base64.encode(credentials.email + ':' + credentials.password);
 
                 $http.defaults.headers.common.Authorization = 'Basic ' + encoded;
                 return $http.post('http://localhost:5000/login');
                     /*.success(function (data, status, headers, config) {
                         $cookies.put('sessiontoken', data.token);
+
                         self.isLoggedIn = true;
 
                     })
