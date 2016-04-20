@@ -1,5 +1,6 @@
 __author__ = 'dmczk'
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.orm import relationship
 from database import Base
 import uuid
 import datetime
@@ -14,7 +15,7 @@ class Club(Base):
     idclub = Column("idclub", Integer, primary_key=True)
     name = Column("name", String(150))
     description = Column("description", String(500))
-
+    profiles = relationship("Profile")
     def __init__(self, name=None, description=None):
         self.name = name
         self.description = description
@@ -67,6 +68,8 @@ class Profile(Base):
     firstname = Column("firstname", String(100))
     lastname = Column("lastname", String(100))
     email = Column("email", String(200))
+    club_id = Column("club", Integer, ForeignKey("club.idclub"))
+    club = relationship("Club", backref="profile")
 
     def __init__(self, user=None):
         self.user = user

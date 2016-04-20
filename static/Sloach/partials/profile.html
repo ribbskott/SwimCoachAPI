@@ -1,23 +1,46 @@
-<div ng-controller="profileCtrl" layout="column" layout-padding ng-cloak>
+<div ng-controller="profileCtrl" layout="column"  layout-padding ng-cloak>
     <md-content class="md-no-momentum">
-        <md-input-container class="md-icon-float md-block">
-          <!-- Use floating label instead of placeholder -->
-          <label>Namn</label>
-          <md-icon class="name"></md-icon>
-          <input ng-model="user.name" type="text">
-        </md-input-container>
-        <md-input-container md-no-float class="md-block">
-          <md-icon md-svg-src="img/icons/ic_phone_24px.svg"></md-icon>
-          <input ng-model="user.phone" type="text" placeholder="Telefonnummer">
-        </md-input-container>
-        <md-input-container class="md-block">
-          <!-- Use floating placeholder instead of label -->
-          <md-icon md-svg-src="img/icons/ic_email_24px.svg" class="email"></md-icon>
-          <input ng-model="user.email" type="email" placeholder="E-post (obligatoriskt)" ng-required="true">
-        </md-input-container>
-        <md-input-container md-no-float class="md-block">
-          <input ng-model="user.address" type="text" placeholder="Adress" >
-          <md-icon md-svg-src="img/icons/ic_place_24px.svg" style="display:inline-block;"></md-icon>
-        </md-input-container>
+        <div >
+            <md-card>
+                <md-card-title>
+                    <md-card-header>
+
+                    </md-card-header>
+                    <md-card-title-text>
+                        <span class="md-headline">Klubbnamn</span>
+                        <span class="md-subhead">Large</span>
+                    </md-card-title-text>
+                    <md-card-title-media>
+                        <div class="md-media-lg card-media"></div>
+                    </md-card-title-media>
+                </md-card-title>
+                <md-card-actions layout="row" layout-align="end center">
+                    <md-button>Redigera uppgifter</md-button>
+                    <md-button>Action 2</md-button>
+                </md-card-actions>
+            </md-card>
+        </div>
     </md-content>
+    <md-content class="md-no-momentum">
+        <md-whiteframe layout="column" layout-padding="" layout-margin="" flex="" class="md-whiteframe-2dp vertical-align-top layout-margin layout-padding layout-column flex">
+        <div class="padded"">
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>Förnamn</label>
+                <input ng-model="profile.firstname">
+              </md-input-container>
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>Efternamn</label>
+                <input ng-model="profile.lastname">
+              </md-input-container>
+
+            </div>
+            <div layout-gt-sm="row">
+            <md-input-container class="md-block flex">
+              <input ng-model="profile.email" type="email" placeholder="E-post (obligatoriskt)" ng-required="true">
+            </md-input-container>
+                </div>
+        </md-whiteframe>
+        </md-content>
+    </div>
 </div>

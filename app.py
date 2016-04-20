@@ -7,6 +7,7 @@ from models import Club, User, Session, Profile
 from database import db_session
 
 from session_manager import SessionManager
+from sloach_object_provider import SloachObjectProvider
 from sqlalchemy import or_
 import datetime
 import json
@@ -14,6 +15,7 @@ import json
 
 auth = HTTPBasicAuth()
 app = Flask(__name__)
+
 
 def check_auth(request):
     if request.headers.get('sessiontoken') is None:
@@ -62,8 +64,10 @@ def signup_user():
         jsondata = json.dumps(request.json)
 
         session = SessionManager.create_user(jsondata, userhash)
+
         if session:
-            return jsonify({'iduser': session.iduser, 'token': str(session.sessiontoken)})
+            profile = SloachObjectProvider.create_profile(session.iduser, {"firstname": "", "lastname": "", "address": "", "email": json.loads(jsondata)['email']})
+            return jsonify({'iduser': session.iduser, 'token': str(session.sessiontoken), 'profile': {"firstname": profile.firstname, "lastname": profile.lastname, "email": profile.email}})
     return make_response("Username already exists", 400)
 
 @app.route('/login', methods=['POST', 'GET'])
@@ -75,7 +79,12 @@ def login_user():
         session = SessionManager.create_session(hash)
         if session is None:
             return make_response("User not found or password is invalid", 404)
-        return jsonify({'iduser': session.iduser, 'token': str(session.sessiontoken)})
+        profile = SloachObjectProvider.get_profile(session.iduser)
+        if profile is None:
+            return make_response("Couldn't find your profile", 500)
+        loginResult = {'iduser': session.iduser, 'token': str(session.sessiontoken), 'profile': {"firstname": profile.firstname, "lastname": profile.lastname, "email": profile.email}}
+
+        return jsonify(loginResult)
     return make_response("",401)
 
 @app.route('/logout', methods=['POST','GET'])
@@ -137,15 +146,21 @@ def update_club(idclub):
 
     return jsonify({'club': club[0]})
 
-@app.route('/users/<int:iduser>/profile', methods=['GET'])
-def get_profile(iduser):
+@app.route('/users/<int:iduser>/profile', methods=['GET', 'POST'])
+def get_profile(iduser, profile):
     if not check_auth(request):
         abort(401)
-    profile = db_session.query(Profile).filter_by(user=iduser)
-    if not profile:
+    if request.method == 'GET':
+        retProfile = db_session.query(Profile).filter_by(user=iduser)
+    if request.method == 'POST':
+        retProfile = SloachObjectProvider.create_profile(iduser, profile)
+    else:
+        return make_response("Only POST and GET calls are allowed")
+
+    if not retProfile:
         return make_response("No profile found", 404)
-
-
+    else:
+        return make_response(retProfile,200)
 
 # USER BEGIN
 # USER END

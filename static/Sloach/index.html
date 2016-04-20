@@ -12,6 +12,7 @@
 <md-toolbar scroll flex layout="row">
     <div class="md-toolbar-tools red">
      <md-button ng-show="isLoggedIn" ng-click="showMenu()" class="material-icons">menu</md-button>
+        <md-button ng-show="isLoggedIn" ng-click="showProfile()" class="material-icons">person</md-button>
       <md-button ng-show="!isLoggedIn" aria-label="Logga in" ng-href="{{loginUrl}}" ui-sref="login">
         <span class="white">Logga in</span>
       </md-button>
@@ -31,7 +32,7 @@
       <md-content layout-padding >
         <md-list flex>
             <md-list-item ng-href="profile" ng-click="navigateProfile()" class="md-2-line" >
-                <img class="md-avatar" alt="" />
+                <img src="img/avatar.png" class="md-avatar" alt="" />
                   <div class="md-list-item-text" layout="column">
                     <h3>Klubben</h3>
                     <h4>Visa klubbprofil</h4>
