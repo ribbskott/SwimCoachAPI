@@ -76,3 +76,11 @@ class Profile(Base):
 
     def __repr__(self):
         return '<Profile %r' % self.firstname + ' ' + self.lastname
+
+class Athlete(Base):
+    __tablename__ = 'athlete'
+    id = Column("id", Integer, primary_key=True)
+    firstname = Column("firstname",String(100))
+    lastname = Column("lastname",String(100))
+    owner = Column("owner", Integer, ForeignKey("club.idclub"))
+

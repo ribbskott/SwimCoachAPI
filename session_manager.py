@@ -24,7 +24,7 @@ class SessionManager():
         session = db_session.query(Session).filter_by(sessiontoken=sessiontoken)
         if len(list(session)) == 0:
             session = None
-        if session.active == 0 or session.logouttime is not None:
+        if session[0].active == 0 or session[0].logouttime is not None:
             session = None
 
         return session

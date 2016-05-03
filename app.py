@@ -18,12 +18,16 @@ app = Flask(__name__)
 
 
 def check_auth(request):
+    # TODO fixa sessionshanteringen så att check_auth returnerar en session (med iduser och liknande)
     if request.headers.get('sessiontoken') is None:
         return False
+    print('hello')
     sessiontoken = request.headers.get('sessiontoken')
     session = SessionManager.get_session(sessiontoken)
     if sessiontoken is None:
         return False
+    else:
+        return True
 
 @app.errorhandler(404)
 def not_found(error):
@@ -137,9 +141,9 @@ def update_club(idclub):
         abort(404)
     if not request.json:
         abort(400)
-    if 'name' in request.json and type(request.json['name']) is not unicode:
+    if 'name' in request.json and type(request.json['name']):
         abort(400)
-    if 'description' in request.json and type(request.json['description']) is not unicode:
+    if 'description' in request.json and type(request.json['description']):
         abort(400)
     club[0]['name'] = request.json.get('name', club[0]['name'])
     club[0]['description'] = request.json.get('description', club[0]['description'])
@@ -147,20 +151,26 @@ def update_club(idclub):
     return jsonify({'club': club[0]})
 
 @app.route('/users/<int:iduser>/profile', methods=['GET', 'POST'])
-def get_profile(iduser, profile):
+def get_profile(iduser):
     if not check_auth(request):
         abort(401)
+
+    retprofile = None
+
     if request.method == 'GET':
-        retProfile = db_session.query(Profile).filter_by(user=iduser)
+        retprofile = db_session.query(Profile).filter_by(user=iduser)
     if request.method == 'POST':
-        retProfile = SloachObjectProvider.create_profile(iduser, profile)
+        # Todo: Check the code below.
+        profile = request.get_json()
+        retprofile = SloachObjectProvider.create_profile(iduser, profile)
+
     else:
         return make_response("Only POST and GET calls are allowed")
 
-    if not retProfile:
+    if not retprofile:
         return make_response("No profile found", 404)
     else:
-        return make_response(retProfile,200)
+        return make_response(jsonify(profile), 200)
 
 # USER BEGIN
 # USER END
@@ -170,7 +180,7 @@ def get_profile(iduser, profile):
 
 @auth.error_handler
 def unauthorized():
-    return make_response(jsonify({'error': 'Unauthorized access'}), 403)
+    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
 
 
 @auth.verify_password
@@ -218,9 +228,9 @@ def new_user():
 
     return jsonify({'username': user.username}), 201
 
-@auth.error_handler
-def unauthorized():
-    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
+#@auth.error_handler
+#def unauthorized():
+#    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
 
 #@app.errorhandler(400)
 #def custom400(error):

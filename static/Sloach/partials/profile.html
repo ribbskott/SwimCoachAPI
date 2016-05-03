@@ -1,46 +1,19 @@
-<div ng-controller="profileCtrl" layout="column"  layout-padding ng-cloak>
-    <md-content class="md-no-momentum">
-        <div >
-            <md-card>
-                <md-card-title>
-                    <md-card-header>
-
-                    </md-card-header>
-                    <md-card-title-text>
-                        <span class="md-headline">Klubbnamn</span>
-                        <span class="md-subhead">Large</span>
-                    </md-card-title-text>
-                    <md-card-title-media>
-                        <div class="md-media-lg card-media"></div>
-                    </md-card-title-media>
-                </md-card-title>
-                <md-card-actions layout="row" layout-align="end center">
-                    <md-button>Redigera uppgifter</md-button>
-                    <md-button>Action 2</md-button>
-                </md-card-actions>
-            </md-card>
-        </div>
-    </md-content>
-    <md-content class="md-no-momentum">
-        <md-whiteframe layout="column" layout-padding="" layout-margin="" flex="" class="md-whiteframe-2dp vertical-align-top layout-margin layout-padding layout-column flex">
-        <div class="padded"">
-            <div layout-gt-sm="row">
-              <md-input-container class="md-block" flex-gt-sm>
-                <label>Förnamn</label>
-                <input ng-model="profile.firstname">
-              </md-input-container>
-              <md-input-container class="md-block" flex-gt-sm>
-                <label>Efternamn</label>
-                <input ng-model="profile.lastname">
-              </md-input-container>
-
-            </div>
-            <div layout-gt-sm="row">
-            <md-input-container class="md-block flex">
-              <input ng-model="profile.email" type="email" placeholder="E-post (obligatoriskt)" ng-required="true">
-            </md-input-container>
-                </div>
-        </md-whiteframe>
-        </md-content>
+<md-content class="md-padding" layout-xs="column" ng-controller="profileCtrl" layout="row">
+    <div flex-xs flex-gt-xs="50" layout="column">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline" ng-model="profile.name"></span>
+                    <span class="md-subhead">Large</span>
+                </md-card-title-text>
+                <md-card-title-media>
+                    <div class="md-media-lg card-media"></div>
+                </md-card-title-media>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="editProfile()">Redigera</md-button>
+                <md-button>Action 2</md-button>
+            </md-card-actions>
+        </md-card>
     </div>
-</div>
+</md-content>

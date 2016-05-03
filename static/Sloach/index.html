@@ -30,12 +30,22 @@
         <h1 class="md-toolbar-tools"><md-button ng-show="!$mdMedia('md')" ng-click="close()" class="material-icons" hide-gt-md>keyboard_backspace</md-button></h1>
       </md-toolbar>
       <md-content layout-padding >
-        <md-list flex>
-            <md-list-item ng-href="profile" ng-click="navigateProfile()" class="md-2-line" >
-                <img src="img/avatar.png" class="md-avatar" alt="" />
+       <md-card ng-click="navigateProfile()">
+        <md-card-header>
+            <md-card-avatar>
+                <img class="md-user-avatar" src="img/avatar.png">
+            </md-card-avatar>
+            <md-card-header-text>
+              <span class="md-title">Pawel Demczuk</span>
+              <span class="md-subhead">pawel@dni.se</span>
+            </md-card-header-text>
+        </md-card-header>
+         </md-card>
+           <md-list flex>
+            <md-list-item ng-href="club" ng-click="navigateClub()" class="md-2-line" >
                   <div class="md-list-item-text" layout="column">
                     <h3>Klubben</h3>
-                    <h4>Visa klubbprofil</h4>
+                    <h4>Visa klubb</h4>
                   </div>
             </md-list-item>
         </md-list>
@@ -62,6 +72,7 @@
 <script src="/static/Sloach/js/controllers/app.js"></script>
 <script src="/static/Sloach/js/controllers/auth.js"></script>
 <script src="/static/Sloach/js/controllers/profile.js"></script>
+<script src="/static/Sloach/js/controllers/club.js"></script>
 <script src="/static/Sloach/js/controllers/MainMenuCtrl.js"></script>
 <script src="/static/Sloach/js/services.js"></script>
 
