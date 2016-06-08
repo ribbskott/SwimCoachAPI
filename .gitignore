@@ -1,5 +1,5 @@
 *.orig
-__pycache__/
+__pycache__
 *$py.class
 
 # Compiled source #
