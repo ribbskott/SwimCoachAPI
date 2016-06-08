@@ -5,6 +5,9 @@ angular.module('sloach').controller('profileCtrl', ['$scope', '$rootScope', 'Pro
     $scope.editProfile = function(){
         $location.path('/profile/edit');
     };
+    $scope.navigateBack = function(){
+        $location.path('/profile/view');
+    };
 
     $scope.updateProfile = function(){
         profiles.updateProfile($rootScope.session.iduser, $scope.profile);
@@ -20,9 +23,5 @@ angular.module('sloach').controller('profileCtrl', ['$scope', '$rootScope', 'Pro
                         });
     };
 
-    $scope.getClub = function(){
-        var getClubPromise = profiles.getClub($rootScope.session.iduser);
-
-    };
 
 }]);

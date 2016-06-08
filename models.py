@@ -1,5 +1,6 @@
 __author__ = 'dmczk'
 from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy.dialects.mssql import UNIQUEIDENTIFIER
 from sqlalchemy.orm import relationship
 from database import Base
 import uuid
@@ -15,7 +16,7 @@ class Club(Base):
     idclub = Column("idclub", Integer, primary_key=True)
     name = Column("name", String(150))
     description = Column("description", String(500))
-    profiles = relationship("Profile")
+
     def __init__(self, name=None, description=None):
         self.name = name
         self.description = description
@@ -32,9 +33,7 @@ class User(Base):
     email = Column("email", String(200))
     hash = Column("hash", String(50))
 
-
     def __init__(self, email="", hash=""):
-
         self.hash = hash
         self.email = email
 
@@ -68,19 +67,21 @@ class Profile(Base):
     firstname = Column("firstname", String(100))
     lastname = Column("lastname", String(100))
     email = Column("email", String(200))
-    club_id = Column("club", Integer, ForeignKey("club.idclub"))
-    club = relationship("Club", backref="profile")
+    clubkey = Column("clubkey", UNIQUEIDENTIFIER)
+
 
     def __init__(self, user=None):
         self.user = user
 
     def __repr__(self):
-        return '<Profile %r' % self.firstname + ' ' + self.lastname
+        return '<Profile %r>' % self.firstname + ' ' + self.lastname
 
 class Athlete(Base):
     __tablename__ = 'athlete'
     id = Column("id", Integer, primary_key=True)
     firstname = Column("firstname",String(100))
     lastname = Column("lastname",String(100))
-    owner = Column("owner", Integer, ForeignKey("club.idclub"))
+    owner = Column("club", UNIQUEIDENTIFIER)
 
+    def __repr__(self):
+        return '<Athlete %r>' % self.firstname + ' ' + self.lastname

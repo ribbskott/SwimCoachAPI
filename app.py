@@ -21,7 +21,7 @@ def check_auth(request):
     # TODO fixa sessionshanteringen så att check_auth returnerar en session (med iduser och liknande)
     if request.headers.get('sessiontoken') is None:
         return False
-    print('hello')
+
     sessiontoken = request.headers.get('sessiontoken')
     session = SessionManager.get_session(sessiontoken)
     if sessiontoken is None:
@@ -86,7 +86,7 @@ def login_user():
         profile = SloachObjectProvider.get_profile(session.iduser)
         if profile is None:
             return make_response("Couldn't find your profile", 500)
-        loginResult = {'iduser': session.iduser, 'token': str(session.sessiontoken), 'profile': {"firstname": profile.firstname, "lastname": profile.lastname, "email": profile.email}}
+        loginResult = {'iduser': session.iduser, 'token': str(session.sessiontoken), 'profile': {"firstname": profile.firstname, "lastname": profile.lastname, "email": profile.email, "clubkey": profile.clubkey}}
 
         return jsonify(loginResult)
     return make_response("",401)
@@ -132,21 +132,17 @@ def create_club():
 
     return jsonify({"status": "OK"})
 
-@app.route('/clubs/<int:idclub>', methods=['PUT'])
+@app.route('/clubs/<int:idclub>', methods=['PUT', 'GET'])
 def update_club(idclub):
     if not check_auth(request):
         abort(401)
-    club = db_session.query(Club).filter_by(idclub=idclub)
-    if len(list(club)) == 0:
-        abort(404)
-    if not request.json:
-        abort(400)
-    if 'name' in request.json and type(request.json['name']):
-        abort(400)
-    if 'description' in request.json and type(request.json['description']):
-        abort(400)
-    club[0]['name'] = request.json.get('name', club[0]['name'])
-    club[0]['description'] = request.json.get('description', club[0]['description'])
+    if request.method == 'GET':
+        club = db_session.query(Club).filter_by(idclub=idclub)
+        if len(list(club)) == 0:
+            abort(404)
+    if request.method == 'PUT':
+        if not request.json:
+            abort(400)
 
     return jsonify({'club': club[0]})
 
@@ -205,12 +201,8 @@ def get_userSession():
 
 @app.route('/users', methods=['POST'])
 def new_user():
-    username = request.json.get('username')
     password = request.json.get('password')
     email = request.json.get('email')
-    if username is None or username == "":
-    #    # missing arguments
-        abort(400, {'message': 'Username is required'})
     if password is None or password == "":
         abort(400, {'message': 'Password is required'})
     if email is None or email == "":

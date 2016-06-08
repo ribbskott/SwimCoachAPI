@@ -1,10 +1,10 @@
 <md-content class="md-padding" layout-xs="column" ng-controller="profileCtrl" layout="row">
-    <div flex-xs flex-gt-xs="50" layout="column">
+    <div flex-xs flex-gt-xs="30" layout="column">
         <md-card>
             <md-card-title>
                 <md-card-title-text>
-                    <span class="md-headline" ng-model="profile.name"></span>
-                    <span class="md-subhead">Large</span>
+                    <span class="md-headline" >{{profile.firstname}} {{profile.lastname}}</span>
+                    <span class="md-subhead">{{profile.email}}</span>
                 </md-card-title-text>
                 <md-card-title-media>
                     <div class="md-media-lg card-media"></div>
@@ -12,7 +12,6 @@
             </md-card-title>
             <md-card-actions layout="row" layout-align="end center">
                 <md-button ng-click="editProfile()">Redigera</md-button>
-                <md-button>Action 2</md-button>
             </md-card-actions>
         </md-card>
     </div>

@@ -1,0 +1,27 @@
+<md-content class="md-padding" layout-xs="column" ng-controller="clubCtrl" layout="row">
+    <div flex-xs flex-gt-xs="30" layout="column">
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Klubbnamn</span>
+                    <span class="md-subhead">Large</span>
+                </md-card-title-text>
+                <md-card-title-media>
+                    <div class="md-media-lg card-media"></div>
+                </md-card-title-media>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button>Redigera</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-list>
+          <md-header class="md-no-sticky">Simmare</md-header>
+          <md-list-item class="md-3-line" ng-repeat="athlete in athletes">
+            <!--img ng-src="{{item.face}}?{{$index}}" class="md-avatar" alt="{{item.who}}" /-->
+            <div class="md-list-item-text" layout="column">
+              <h3>{{athlete.firstname}} {{athlete.lastname}}</h3>
+            </div>
+          </md-list-item>
+        </md-list>
+    </div>
+</md-content>
