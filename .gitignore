@@ -1,6 +1,5 @@
 *.orig
 __pycache__/
-*.py
 *$py.class
 
 # Compiled source #

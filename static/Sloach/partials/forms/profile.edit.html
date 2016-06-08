@@ -1,0 +1,27 @@
+<div ng-controller="profileCtrl" layout="column"  layout-padding ng-cloak>
+    <md-content class="md-no-momentum" >
+        <md-whiteframe layout-padding="" layout-margin="" flex="" class="md-whiteframe-2dp vertical-align-top layout-margin layout-padding layout-column flex flex-xs" flex-gt-xs="30" layout="column">
+        <div class="padded">
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>Förnamn</label>
+                <input ng-model="profile.firstname">
+              </md-input-container>
+              <md-input-container class="md-block" flex-gt-sm>
+                <label>Efternamn</label>
+                <input ng-model="profile.lastname">
+              </md-input-container>
+
+            </div>
+            <div layout-gt-sm="row">
+            <md-input-container class="md-block flex">
+              <input ng-model="profile.email" type="email" placeholder="E-post (obligatoriskt)" ng-required="true">
+            </md-input-container>
+            </div>
+            <md-button class="md-raised" ng-click="navigateBack()">Avbryt</md-button>
+            <md-button class="md-raised md-primary" ng-click="updateProfile()">Spara</md-button>
+
+        </md-whiteframe>
+        </md-content>
+    </div>
+</div>
