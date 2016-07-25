@@ -14,9 +14,11 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', 'ClubSe
 //    };
 
     $scope.getClub = function(){
+
         var getClubPromise = clubs.getClub($rootScope.session.profile.clubkey);
-        getProfilePromise.success(function (data, status, headers, config) {
+        getClubPromise.success(function (data, status, headers, config) {
                             $rootScope.club = data;
+
                         })
                         .error(function(data, status,headers,config){
                             alert(JSON.stringify(data));
@@ -24,6 +26,7 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', 'ClubSe
     };
 
     if($scope.club === undefined){
+        console.log("undefined");
         $scope.getClub();
     }
 

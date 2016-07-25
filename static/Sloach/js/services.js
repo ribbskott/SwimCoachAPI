@@ -38,9 +38,9 @@ angular.module('sloach').factory('AthleteService',function($http){
 
 angular.module('sloach').factory('ClubService',function($http){
     return{
-        getClub: function (idclub) {
+        getClub: function (rowkey) {
             var profile;
-            var url = "http://localhost:5000/clubs/" + String(idclub) ;
+            var url = "http://localhost:5000/clubs/" + String(rowkey) ;
 
             return $http.get(url);
         }

@@ -44,19 +44,33 @@ def get_clubs():
     for result in results:
       d = {'idclub': result.idclub,
            'name': result.name,
-           'description': result.description}
+           'description': result.description,
+           'postaladdress': result.postaladdress,
+           'postalzipcode': result.postalzipcode,
+           'postalcity': result.postalcity,
+           'visitingaddress': result.visitingaddress,
+           'visitingzipcode': result.visitingzipcode,
+           'visitingcity': result.visitingcity,
+           'rowkey': result.rowkey}
       json_results.append(d)
 
     return jsonify({'clubs': json_results})
 
-@app.route('/clubs/<int:idclub>', methods=['GET'])
-def get_club(idclub):
+@app.route('/clubs/<string:rowkey>', methods=['GET'])
+def get_club(rowkey):
     if not check_auth(request):
         abort(401)
-    club = db_session.query(Club).filter_by(idclub=idclub)
+    club = db_session.query(Club).filter_by(rowkey=rowkey)
     if len(list(club)) == 0:
         abort(404)
-    return jsonify({'idclub': club[0].idclub, 'name': club[0].name, 'description': club[0].description})
+    return jsonify({'idclub': club[0].idclub, 'name': club[0].name, 'description': club[0].description,
+                    'postaladdress': club[0].postaladdress,
+                    'postalzipcode': club[0].postalzipcode,
+                    'postalcity': club[0].postalcity,
+                    'visitingaddress': club[0].visitingaddress,
+                    'visitingzipcode': club[0].visitingzipcode,
+                    'visitingcity': club[0].visitingcity,
+                    'rowkey': club[0].rowkey})
 
 @app.route('/signup', methods=['POST'])
 def signup_user():

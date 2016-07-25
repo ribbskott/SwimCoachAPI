@@ -16,6 +16,13 @@ class Club(Base):
     idclub = Column("idclub", Integer, primary_key=True)
     name = Column("name", String(150))
     description = Column("description", String(500))
+    postaladdress = Column("postaladdress", String(100))
+    postalzipcode = Column("postalzipcode", String(13))
+    postalcity = Column("postalcity",String(50))
+    visitingaddress = Column("visitingaddress", String(100))
+    visitingzipcode = Column("visitingzipcode", String(13))
+    visitingcity = Column("visitingcity",String(50))
+    rowkey = Column("rowkey", String(40), unique=True)
 
     def __init__(self, name=None, description=None):
         self.name = name
