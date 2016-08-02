@@ -1,12 +1,10 @@
-<md-content class="md-padding" layout-xs="row" ng-controller="clubCtrl" layout="row">
+<md-content class="md-padding" layout-xs="row" ng-controller="ahtleteCtrl" layout="row">
     <div flex-gt-md="33" flex="0"></div>
         <div flex-xs flex-gt-xs="30" layout="column">
             <md-card>
                 <md-card-title>
                     <md-card-title-text>
-                        <span class="md-headline">{{club.name}}</span>
-                        <span class="md-subhead">{{club.postaladdress}}</span>
-                        <span class="md-subhead">{{club.postalzipcode}} {{club.postalcity}}</span>
+                        <span class="md-headline">{{athlete.firstname}} {{athlete.lastname}}</span>
                      </md-card-title-text>
                     <md-card-title-media>
                         <img ng-src="~/../img/hss_logo.gif" class="md-card-image" alt="">

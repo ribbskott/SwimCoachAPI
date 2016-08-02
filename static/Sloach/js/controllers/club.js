@@ -1,4 +1,4 @@
-angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', 'ClubService', function($scope, $rootScope, clubs){
+angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$location', 'ClubService', function($scope, $rootScope, $location, clubs){
 
     $scope.profile = $rootScope.session.profile;
 
@@ -13,22 +13,37 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', 'ClubSe
 //        profiles.updateClub($rootScope.session.iduser, $scope.profile);
 //    };
 
+
+    $scope.viewAthlete = function(){
+        $location.path('/athlete/view')
+    }
+
     $scope.getClub = function(){
 
         var getClubPromise = clubs.getClub($rootScope.session.profile.clubkey);
         getClubPromise.success(function (data, status, headers, config) {
                             $rootScope.club = data;
-
+                            $scope.getAthletes();
                         })
                         .error(function(data, status,headers,config){
                             alert(JSON.stringify(data));
                         });
     };
 
-    if($scope.club === undefined){
-        console.log("undefined");
-        $scope.getClub();
+    $scope.getAthletes = function(){
+        var getAthletesPromise = clubs.getAthletes($rootScope.session.profile.clubkey);
+        getAthletesPromise.success(function(data, status, headers, config){
+            $rootScope.club.athletes = data.athletes;
+
+        })
+
     }
+
+    if($rootScope.club === undefined){
+        $scope.getClub();
+
+    }
+
 
 
 }]);

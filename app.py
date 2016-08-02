@@ -3,7 +3,7 @@ __author__ = 'dmczk'
 
 from flask import Flask, jsonify, abort, make_response, request
 from flask.ext.httpauth import HTTPBasicAuth
-from models import Club, User, Session, Profile
+from models import Club, User, Session, Profile, Athlete, Group, GroupMember
 from database import db_session
 
 from session_manager import SessionManager
@@ -23,7 +23,7 @@ def check_auth(request):
         return False
 
     sessiontoken = request.headers.get('sessiontoken')
-    session = SessionManager.get_session(sessiontoken)
+    #session = SessionManager.get_session(sessiontoken)
     if sessiontoken is None:
         return False
     else:
@@ -159,6 +159,23 @@ def update_club(idclub):
             abort(400)
 
     return jsonify({'club': club[0]})
+
+
+@app.route('/clubs/<rowkey>/athletes', methods=['GET'])
+def get_athletes(rowkey):
+    if not check_auth(request):
+        abort(401)
+    if request.method == 'GET':
+        athletes = db_session.query(Athlete).filter_by(club=rowkey)
+        if len(list(athletes)) == 0:
+            abort(404)
+        else:
+            retAthletes = []
+            for athlete in athletes:
+                retAthlete = {'firstname': athlete.firstname, 'lastname': athlete.lastname}
+                retAthletes.append(retAthlete)
+            return make_response(jsonify({'athletes': retAthletes}))
+
 
 @app.route('/users/<int:iduser>/profile', methods=['GET', 'POST'])
 def get_profile(iduser):

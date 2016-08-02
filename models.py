@@ -1,5 +1,5 @@
 __author__ = 'dmczk'
-from sqlalchemy import Column, Integer, String, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, DateTime, ForeignKey, Date, Time
 from sqlalchemy.dialects.mssql import UNIQUEIDENTIFIER
 from sqlalchemy.orm import relationship
 from database import Base
@@ -23,6 +23,9 @@ class Club(Base):
     visitingzipcode = Column("visitingzipcode", String(13))
     visitingcity = Column("visitingcity",String(50))
     rowkey = Column("rowkey", String(40), unique=True)
+    groups = relationship("Group",back_populates="club")
+
+
 
     def __init__(self, name=None, description=None):
         self.name = name
@@ -76,19 +79,68 @@ class Profile(Base):
     email = Column("email", String(200))
     clubkey = Column("clubkey", UNIQUEIDENTIFIER)
 
-
     def __init__(self, user=None):
         self.user = user
 
     def __repr__(self):
         return '<Profile %r>' % self.firstname + ' ' + self.lastname
 
+
+
+
+class TrainingSession(Base):
+    __tablename__ = "trainingsession"
+    id = Column("id",primary_key=True)
+    name = Column("name", String(100))
+    description = Column("description", String(250))
+    fromtime = Column("fromtime", DateTime)
+    totime = Column("totime", DateTime)
+    group = Column("group", ForeignKey("group.id"))
+    traininggroup = relationship("Group", back_populates="sessions")
+    results = relationship("TrainingResult", back_populates="achievedonsession")
+
+    def __repr__(self):
+        return '<TrainingSession %r>' % self.name + ' ' + self.fromtime + '-' + self.totime
+
+class GroupMember(Base):
+    __tablename__ = "groupmember"
+    id = Column("id",primary_key=True)
+    athlete_id = Column("athlete", Integer, ForeignKey("athlete.id"))
+    group_id = Column("group", Integer, ForeignKey("group.id"))
+    group = relationship("Group", back_populates="members")
+    athlete = relationship("Athlete", back_populates="memberofgroups")
+
+
+class Group(Base):
+    __tablename__ = "group"
+    id = Column("id", primary_key=True)
+    name = Column("name",String(100))
+    description = Column("description", String(512))
+    owner = Column("owner", Integer, ForeignKey("club.idclub"))
+    members = relationship("GroupMember", back_populates = "group")
+    club = relationship("Club", back_populates="groups")
+    sessions = relationship("TrainingSession", back_populates="traininggroup")
+
+    def __repr__(self):
+        return '<Group %r>' % self.name
+
+
 class Athlete(Base):
     __tablename__ = 'athlete'
     id = Column("id", Integer, primary_key=True)
     firstname = Column("firstname",String(100))
     lastname = Column("lastname",String(100))
-    owner = Column("club", UNIQUEIDENTIFIER)
+    dateofbirth = Column("dateofbirth", Date)
+    club = Column("club", UNIQUEIDENTIFIER)
+    memberofgroups = relationship("GroupMember", back_populates="athlete")
 
     def __repr__(self):
         return '<Athlete %r>' % self.firstname + ' ' + self.lastname
+
+class TrainingResult(Base):
+    __tablename__ = "trainingresult"
+    id = Column("id", Integer, primary_key=True)
+    resulttype = Column("resulttype", Integer)
+    timeresult = Column("timeresult", Time)
+    trainingsession = Column("trainingsession", ForeignKey("trainingsession.id"))
+    achievedonsession = relationship("TrainingSession", back_populates="results")
