@@ -43,12 +43,28 @@ angular.module('sloach').factory('ClubService',function($http){
             var url = "http://localhost:5000/clubs/" + String(rowkey) ;
 
             return $http.get(url);
-        },
-        getAthletes: function(rowkey){
-            var url = "http://localhost:5000/clubs/" + String(rowkey) + "/athletes";
-
-            return $http.get(url);
         }
+
     };
 
 });
+
+angular.module('sloach').factory('AthleteService',function($http){
+    return{
+        getAthletes: function(clubkey){
+            var url = "http://localhost:5000/clubs/" + String(clubkey) + "/athletes";
+
+            return $http.get(url);
+        },
+        addAthlete: function(clubkey, athlete){
+            var url = "http://localhost:5000/clubs/" + String(clubkey) + "/athletes";
+
+            return $http.post(url, athlete)
+        },
+        getResultsForAthlete:function(idathlete){
+            var url = "http://localhost:5000/clubs/" + String(clubkey) + "/athletes/" + String(idathlete);
+            return $http.get(url);
+        }
+
+    };
+})

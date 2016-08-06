@@ -1,0 +1,49 @@
+<div ng-controller="clubCtrl" layout="column"  layout-padding ng-cloak>
+    <md-content class="md-no-momentum" >
+        <md-whiteframe layout-padding="" layout-margin="" flex="" class="md-whiteframe-2dp vertical-align-top layout-margin layout-padding layout-column flex flex-xs" flex-gt-xs="30" layout="column">
+        <div class="padded">
+            <div layout-gt-sm="row">
+              <md-input-container class="md-block" flex-gt-sm>
+                  <label>Namn</label>
+                <input ng-model="club.name">
+              </md-input-container>
+                <md-input-container class="md-block flex">
+              <input ng-model="club.registrationno" placeholder="Organisationsnummer" >
+            </md-input-container>
+                </div>
+            </div>
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Postadress</label>
+                    <input ng-model="club.postaladdress">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Postnummer</label>
+                    <input ng-model="club.postalzipcode">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Ort</label>
+                    <input ng-model="club.postalcity">
+                </md-input-container>
+            </div>
+            <div layout-gt-sm="row">
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Besöksadress</label>
+                    <input ng-model="club.visitingaddress">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Postnummer</label>
+                    <input ng-model="club.visitingzipcode">
+                </md-input-container>
+                <md-input-container class="md-block" flex-gt-sm>
+                    <label>Ort</label>
+                    <input ng-model="club.visitingcity">
+                </md-input-container>
+            </div>
+            <md-button class="md-raised" ng-click="cancelEdit()">Avbryt</md-button>
+            <md-button class="md-raised md-primary" ng-click="updateClub()">Spara</md-button>
+
+        </md-whiteframe>
+        </md-content>
+    </div>
+</div>
