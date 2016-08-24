@@ -10,7 +10,6 @@ angular.module('sloach')
 angular.module('sloach').factory('AuthService', function (Base64, $http) {
     var self = this;
     return {
-            isLoggedIn : false,
             errorMessage :"",
 
             getUserSession: function (credentials) {
@@ -38,10 +37,8 @@ angular.module('sloach').factory('AuthService', function (Base64, $http) {
 
             },
 
-            logout : function () {
-                document.execCommand("ClearAuthenticationCache");
-                isLoggedIn = false;
-                $http.defaults.headers.common.Authorization = '';
+            logout : function (sessiontoken) {
+                return $http.post('http://localhost:5000/logout')
             }
 
 };

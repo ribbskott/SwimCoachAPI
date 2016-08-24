@@ -9,6 +9,7 @@
     <base href="http://localhost:5000/static/Sloach/">
 </head>
 <body ng-app="sloach" ng-cloak ng-controller="appCtrl">
+<span flex="20"></span>
 <md-toolbar scroll flex layout="row">
     <div class="md-toolbar-tools red">
      <md-button ng-show="isLoggedIn" ng-click="showMenu()" class="material-icons">menu</md-button>
@@ -19,6 +20,11 @@
       <md-button ng-show="!isLoggedIn" aria-label="Bli medlem" click-Link="signup">
         <span class="white">Bli medlem</span>
       </md-button>
+        <span flex></span>
+      <md-button ng-show="isLoggedIn" aria-label="Logga ut" ng-href="{{logoutUrl}}" ng-click="logout()" >
+        <span class="white">Logga ut</span>
+      </md-button>
+
     </div>
 </md-toolbar>
 <section layout="row" ng-controller="mainMenuCtrl" flex>
@@ -56,7 +62,7 @@
     </md-content>
     </section>
 <div ng-view></div>
-
+<span flex="20"></span>
 <!-- Angular Material requires Angular.js Libraries -->
 <script src="/static/Sloach/lib/angular.min.js"></script>
 <script src="/static/Sloach/lib/angular-animate.min.js"></script>

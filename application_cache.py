@@ -12,7 +12,6 @@ class ApplicationCache:
         self.user_cache = {}
 
     def load_user_cache(self):
-        #Load all users and clubs in a dictionary
         for result in db_session.query(Profile, User).filter(Profile.user == User.id).all():
             self.user_cache[result[1].email] = result[0].clubkey
 

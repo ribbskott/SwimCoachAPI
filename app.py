@@ -47,7 +47,7 @@ def not_found(error):
 @app.route('/clubs', methods=['GET'])
 def get_clubs():
     if not check_auth(request):
-        abort(401)
+        abort(403)
     results = Club.query.all()
     json_results = []
     for result in results:
@@ -137,12 +137,12 @@ def login_user():
 
 @app.route('/logout', methods=['POST','GET'])
 def logout_user():
-    if not request.json or not 'token' in request.json:
+    if not str(request.headers.get('sessiontoken')):
         abort(400)
-    sessionid = request.json['token']
+    sessionid = request.headers.get('sessiontoken')
     session = db_session.query(Session).filter_by(sessiontoken=sessionid, active=1, logouttime=None)
     if len(list(session)) == 0:
-        abort(200)
+        return make_response("",200)
     session[0].logouttime = datetime.datetime.now()
     session[0].active = 0
     db_session.commit()
