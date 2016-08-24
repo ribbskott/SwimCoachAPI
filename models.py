@@ -60,12 +60,14 @@ class Session(Base):
     logouttime = Column("logouttime", DateTime)
     active = Column("active", Integer)
     sessiontoken = Column("sessiontoken", String(40))
+    workstation = Column("workstation", String(20))
 
     def __init__(self, iduser=None):
         self.iduser = iduser
         self.logintime = datetime.datetime.now()
         self.active = 1
         self.sessiontoken = str(uuid.uuid4())
+        self.workstation = ""
 
     def __repr__(self):
         return '<Session %r>' % self.sessiontoken
@@ -133,7 +135,7 @@ class Athlete(Base):
     dateofbirth = Column("dateofbirth", Date)
     club = Column("club", UNIQUEIDENTIFIER)
     memberofgroups = relationship("GroupMember", back_populates="athlete")
-
+    results = relationship("TrainingResult",back_populates="athlete")
     def __repr__(self):
         return '<Athlete %r>' % self.firstname + ' ' + self.lastname
 
@@ -141,6 +143,9 @@ class TrainingResult(Base):
     __tablename__ = "trainingresult"
     id = Column("id", Integer, primary_key=True)
     resulttype = Column("resulttype", Integer)
-    timeresult = Column("timeresult", Time)
+    athlete_id = Column("athlete_id",ForeignKey("athlete.id"),nullable=False)
+    timeresult = Column("timeresult", Integer) #Result stored in milliseconds
+
     trainingsession = Column("trainingsession", ForeignKey("trainingsession.id"))
     achievedonsession = relationship("TrainingSession", back_populates="results")
+    athlete = relationship("Athlete",back_populates="results")

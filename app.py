@@ -1,11 +1,11 @@
 __author__ = 'dmczk'
 #!flask/bin/python
 
-from flask import Flask, jsonify, abort, make_response, request
+from flask import Flask, jsonify, abort, make_response, request, session
 from flask.ext.httpauth import HTTPBasicAuth
-from models import Club, User, Session, Profile, Athlete, Group, GroupMember
+from models import Club, User, Session, Profile, Athlete, Group, GroupMember,TrainingResult
 from database import db_session
-
+from application_cache import ApplicationCache
 from session_manager import SessionManager
 from sloach_object_provider import SloachObjectProvider
 from sqlalchemy import or_
@@ -14,17 +14,26 @@ import json
 
 
 auth = HTTPBasicAuth()
+application_cache  = ApplicationCache()
+application_cache.load_user_cache()
+application_cache.load_active_sessions()
 app = Flask(__name__)
+app.config['SECRET_KEY'] = '?\xbf,\xb4\x8d\xa3"<\x9c\xb0@\x0f5\xab,w\xee\x8d$0\x13\x8b83'
 
+@app.before_request
+def make_session_permanent():
+    session.permanent = True
+    app.permanent_session_lifetime = datetime.timedelta(hours=24)
 
 def check_auth(request):
     # TODO fixa sessionshanteringen så att check_auth returnerar en session (med iduser och liknande)
+
     if request.headers.get('sessiontoken') is None:
         return False
 
     sessiontoken = request.headers.get('sessiontoken')
-    #session = SessionManager.get_session(sessiontoken)
-    if sessiontoken is None:
+    user_session = SessionManager.get_session(sessiontoken)
+    if user_session is None:
         return False
     else:
         return True
@@ -56,21 +65,42 @@ def get_clubs():
 
     return jsonify({'clubs': json_results})
 
-@app.route('/clubs/<string:rowkey>', methods=['GET'])
+@app.route('/clubs/<string:rowkey>', methods=['POST','GET'])
 def get_club(rowkey):
     if not check_auth(request):
-        abort(401)
-    club = db_session.query(Club).filter_by(rowkey=rowkey)
-    if len(list(club)) == 0:
+        abort(403)
+    club = db_session.query(Club).filter_by(rowkey=rowkey).first()
+    if club is None:
         abort(404)
-    return jsonify({'idclub': club[0].idclub, 'name': club[0].name, 'description': club[0].description,
-                    'postaladdress': club[0].postaladdress,
-                    'postalzipcode': club[0].postalzipcode,
-                    'postalcity': club[0].postalcity,
-                    'visitingaddress': club[0].visitingaddress,
-                    'visitingzipcode': club[0].visitingzipcode,
-                    'visitingcity': club[0].visitingcity,
-                    'rowkey': club[0].rowkey})
+    if request.method =='GET':
+        return jsonify({'idclub': club.idclub, 'name': club.name, 'description': club.description,
+                        'postaladdress': club.postaladdress,
+                        'postalzipcode': club.postalzipcode,
+                        'postalcity': club.postalcity,
+                        'visitingaddress': club.visitingaddress,
+                        'visitingzipcode': club.visitingzipcode,
+                        'visitingcity': club.visitingcity,
+                        'rowkey': club.rowkey})
+
+    if request.method =='POST':
+        club.visitingaddress = request.json["visitingaddress"]
+        club.visitingzipcode = request.json["visitingzipcode"]
+        club.visitingcity = request.json["visitingcity"]
+        club.name = request.json["name"]
+        club.postaladdress = request.json["postaladdress"]
+        club.postalzipcode = request.json["postalzipcode"]
+        club.postalcity = request.json["postalcity"]
+        db_session.commit()
+
+    return jsonify({'idclub': club.idclub, 'name': club.name, 'description': club.description,
+                        'postaladdress': club.postaladdress,
+                        'postalzipcode': club.postalzipcode,
+                        'postalcity': club.postalcity,
+                        'visitingaddress': club.visitingaddress,
+                        'visitingzipcode': club.visitingzipcode,
+                        'visitingcity': club.visitingcity,
+                        'rowkey': club.rowkey})
+
 
 @app.route('/signup', methods=['POST'])
 def signup_user():
@@ -94,7 +124,7 @@ def login_user():
 
     if not hash == 'None':
         hash = str.replace(hash, "Basic ", "")
-        session = SessionManager.create_session(hash)
+        session = SessionManager.create_session(hash, request.remote_addr)
         if session is None:
             return make_response("User not found or password is invalid", 404)
         profile = SloachObjectProvider.get_profile(session.iduser)
@@ -119,10 +149,10 @@ def logout_user():
 
     return make_response("",200)
 
-@app.route('/clubs', methods=['POST'])
+@app.route('/clubs', methods=['PUT'])
 def create_club():
     if not check_auth(request):
-        abort(401)
+        abort(403)
     idclub = "0"
     name = ""
     description = ""
@@ -146,15 +176,15 @@ def create_club():
 
     return jsonify({"status": "OK"})
 
-@app.route('/clubs/<int:idclub>', methods=['PUT', 'GET'])
+@app.route('/clubs/<int:idclub>', methods=['POST', 'GET'])
 def update_club(idclub):
     if not check_auth(request):
-        abort(401)
+        abort(403)
     if request.method == 'GET':
         club = db_session.query(Club).filter_by(idclub=idclub)
         if len(list(club)) == 0:
             abort(404)
-    if request.method == 'PUT':
+    if request.method == 'POST':
         if not request.json:
             abort(400)
 
@@ -164,7 +194,7 @@ def update_club(idclub):
 @app.route('/clubs/<rowkey>/athletes', methods=['GET'])
 def get_athletes(rowkey):
     if not check_auth(request):
-        abort(401)
+        abort(403)
     if request.method == 'GET':
         athletes = db_session.query(Athlete).filter_by(club=rowkey)
         if len(list(athletes)) == 0:
@@ -177,10 +207,24 @@ def get_athletes(rowkey):
             return make_response(jsonify({'athletes': retAthletes}))
 
 
+@app.route('/athletes/<rowkey>/results', methods=['GET'])
+def get_results(idathlete):
+    if not check_auth(request):
+        abort(403)
+
+    results = db_session.query_property(TrainingResult).filter_by(id=idathlete)
+
+@app.route('/athletes/<rowkey>/trainingresults',methods=['GET','POST'])
+def get_or_update_trainingresult(rowkey):
+    if not check_auth(request):
+        abort(403)
+
+
+
 @app.route('/users/<int:iduser>/profile', methods=['GET', 'POST'])
 def get_profile(iduser):
     if not check_auth(request):
-        abort(401)
+        abort(403)
 
     retprofile = None
 

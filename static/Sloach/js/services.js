@@ -43,6 +43,10 @@ angular.module('sloach').factory('ClubService',function($http){
             var url = "http://localhost:5000/clubs/" + String(rowkey) ;
 
             return $http.get(url);
+        },
+        updateClub: function(clubkey, club){
+            var url = "http://localhost:5000/clubs/" + club.rowkey;
+            return $http.post(url, club);
         }
 
     };

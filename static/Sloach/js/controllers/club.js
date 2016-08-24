@@ -9,16 +9,13 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$locat
         $location.path('/club/view');
     };
 
-//    $scope.updateProfile = function(){
-//        profiles.updateClub($rootScope.session.iduser, $scope.profile);
-//    };
 
-
-    $scope.viewAthlete = function(){
+    $scope.viewAthlete = function(athlete){
+        $rootScope.selectedAthlete = athlete;
         $location.path('/athlete/view');
     };
 
-    $scope.getClub = function(){
+    var doGetClub = function(){
 
         var getClubPromise = clubs.getClub($rootScope.session.profile.clubkey);
         getClubPromise.success(function (data, status, headers, config) {
@@ -30,15 +27,21 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$locat
                         });
     };
 
+
+    $scope.getClub = function(){
+        doGetClub();
+    }
+
+
+
     $scope.updateClub = function(){
 
         var updateClubPromise = clubs.updateClub($rootScope.session.profile.clubkey, $scope.club);
-        getClubPromise.success(function (data, status, headers, config) {
+        updateClubPromise.success(function (data, status, headers, config) {
                             $rootScope.club = data;
-                            $scope.getAthletes();
                         })
                         .error(function(data, status,headers,config){
-                            alert(JSON.stringify(data));
+                            $scope.error = data;
                         });
     };
 
