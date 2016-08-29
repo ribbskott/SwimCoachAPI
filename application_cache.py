@@ -1,10 +1,9 @@
-from database import db_session
-
 __author__ = 'pde'
 
+from database import db_session
 from models import Profile, User,Session
-from sqlalchemy import join,or_
-import datetime
+
+
 class ApplicationCache:
 
     def __init__(self):
@@ -13,8 +12,7 @@ class ApplicationCache:
 
     def load_user_cache(self):
         for result in db_session.query(Profile, User).filter(Profile.user == User.id).all():
-            self.user_cache[result[1].email] = result[0].clubkey
-
+            self.user_cache[result[1].id] = result[0].clubkey
 
     def load_active_sessions(self):
         for result in db_session.query(Session).\
@@ -27,3 +25,6 @@ class ApplicationCache:
     def remove_session_from_cache(self,sessiontoken):
         del self.session_cache[sessiontoken]
 
+    def get_club_by_sessiontoken(self, sessiontoken):
+        club = self.user_cache[self.session_cache[sessiontoken]]
+        return club

@@ -26,16 +26,22 @@ def make_session_permanent():
     app.permanent_session_lifetime = datetime.timedelta(hours=24)
 
 def check_auth(request):
-    # TODO fixa sessionshanteringen så att check_auth returnerar en session (med iduser och liknande)
-
     if request.headers.get('sessiontoken') is None:
         return False
 
     sessiontoken = request.headers.get('sessiontoken')
+    cached_session = application_cache .session_cache[sessiontoken]
+    #first check the application cache after the user session
+    if cached_session is not None:
+        return True
+    #Query the database for the user session
     user_session = SessionManager.get_session(sessiontoken)
     if user_session is None:
+        application_cache.remove_session_from_cache(sessiontoken)
         return False
     else:
+        if application_cache.session_cache[sessiontoken] is None:
+            application_cache.session_cache[sessiontoken] = user_session.userid
         return True
 
 @app.errorhandler(404)
@@ -112,7 +118,7 @@ def signup_user():
         jsondata = json.dumps(request.json)
 
         session = SessionManager.create_user(jsondata, userhash)
-
+        application_cache.add_session_to_cache({"sessiontoken": session, "userid": session.iduser})
         if session:
             profile = SloachObjectProvider.create_profile(session.iduser, {"firstname": "", "lastname": "", "address": "", "email": json.loads(jsondata)['email']})
             return jsonify({'iduser': session.iduser, 'token': str(session.sessiontoken), 'profile': {"firstname": profile.firstname, "lastname": profile.lastname, "email": profile.email}})
@@ -127,6 +133,7 @@ def login_user():
         session = SessionManager.create_session(hash, request.remote_addr)
         if session is None:
             return make_response("User not found or password is invalid", 404)
+        application_cache.add_session_to_cache(session)
         profile = SloachObjectProvider.get_profile(session.iduser)
         if profile is None:
             return make_response("Couldn't find your profile", 500)
@@ -140,12 +147,15 @@ def logout_user():
     if not str(request.headers.get('sessiontoken')):
         abort(400)
     sessionid = request.headers.get('sessiontoken')
+
     session = db_session.query(Session).filter_by(sessiontoken=sessionid, active=1, logouttime=None)
     if len(list(session)) == 0:
         return make_response("",200)
     session[0].logouttime = datetime.datetime.now()
     session[0].active = 0
     db_session.commit()
+
+    application_cache.remove_session_from_cache(sessionid)
 
     return make_response("",200)
 
@@ -196,6 +206,9 @@ def get_athletes(rowkey):
     if not check_auth(request):
         abort(403)
     if request.method == 'GET':
+        club = application_cache.get_club_by_sessiontoken(request.headers.get['sessiontoken'])
+        if rowkey != club:
+            abort(401)
         athletes = db_session.query(Athlete).filter_by(club=rowkey)
         if len(list(athletes)) == 0:
             abort(404)
