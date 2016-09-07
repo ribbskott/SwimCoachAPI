@@ -1,22 +1,22 @@
-<md-content class="md-padding" layout-xs="row" ng-controller="clubCtrl" layout="row">
-    <div flex-gt-md="33" flex="0"></div>
-        <div flex-xs flex-gt-xs="30" layout="column">
-            <md-card>
-                <md-card-title>
-                    <md-card-title-text>
-                        <span class="md-headline">{{club.name}}</span>
-                        <span class="md-subhead">{{club.postaladdress}}</span>
-                        <span class="md-subhead">{{club.postalzipcode}} {{club.postalcity}}</span>
-                     </md-card-title-text>
-                    <md-card-title-media>
-                        <img ng-src="~/../img/hss_logo.gif" class="md-card-image" alt="">
-                    </md-card-title-media>
-                </md-card-title>
-                <md-card-actions layout="row" layout-align="end center">
-                    <md-button ng-click="editClub()">Redigera</md-button>
-                </md-card-actions>
-            </md-card>
-        <div flex-xs layout="row">
+<md-content class="md-padding" layout-xs="column" ng-controller="clubCtrl" layout="row">
+    <div flex-xs>
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">{{club.name}}</span>
+                    <span class="md-subhead">{{club.postaladdress}}</span>
+                    <span class="md-subhead">{{club.postalzipcode}} {{club.postalcity}}</span>
+                 </md-card-title-text>
+                <md-card-title-media md-media-sm card-media>
+                    <img ng-src="{{clubPictureUrl}}" class="sm-card-image" alt="">
+                </md-card-title-media>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="editClub()">Redigera</md-button>
+            </md-card-actions>
+        </md-card>
+        </div>
+        <div flex>
             <md-list class="md-dense" flex>
             <md-subheader class="md-no-sticky">Simmare</md-subheader>
             <md-list-item class="md-3-line" ng-repeat="athlete in club.athletes">
@@ -30,6 +30,4 @@
             </md-list>
 
         </div>
-    </div>
-
 </md-content>

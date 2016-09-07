@@ -24,6 +24,7 @@ class Club(Base):
     visitingcity = Column("visitingcity",String(50))
     rowkey = Column("rowkey", String(40), unique=True)
     groups = relationship("Group",back_populates="club")
+    profile_picture = Column("profilepicture", Integer)
 
 
 
@@ -34,7 +35,12 @@ class Club(Base):
     def __repr__(self):
         return '<Club %r>' % self.name
 
-
+class UserFile(Base):
+    __tablename__ = 'userfile'
+    id = Column("id", Integer, primary_key=True)
+    file_type = Column("filetype", String(40))
+    owner = Column("owner", String(40))
+    file_name = Column("filename", String(128))
 
 
 class User(Base):
@@ -49,7 +55,6 @@ class User(Base):
 
     def __repr__(self):
         return '<User %r>' % self.email
-
 
 
 class Session(Base):
@@ -71,6 +76,7 @@ class Session(Base):
 
     def __repr__(self):
         return '<Session %r>' % self.sessiontoken
+
 
 class Profile(Base):
     __tablename__ = 'profile'

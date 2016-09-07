@@ -1,24 +1,39 @@
-<md-content class="md-padding" layout-xs="row" ng-controller="athleteCtrl" layout="row">
-    <div flex-gt-md="33" flex="0"></div>
-        <div flex-xs flex-gt-xs="30" layout="column">
-            <md-card>
-                <md-card-title>
-                    <md-card-title-text>
-                        <span class="md-headline">{{selectedAthlete.firstname}} {{selectedAthlete.lastname}}</span>
-                     </md-card-title-text>
-                </md-card-title>
-                <md-card-actions layout="row" layout-align="end center">
-                    <md-button ng-click="editAthlete()">Redigera</md-button>
-                </md-card-actions>
-            </md-card>
+<md-content class="md-padding" layout-xs="column" ng-controller="athleteCtrl" layout="row">
+    <div flex>
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">{{selectedAthlete.firstname}} {{selectedAthlete.lastname}}</span>
+                    <span class="md-subhead">Gruppnamn</span>
+                 </md-card-title-text>
+                <md-card-title-media>
+                    <div class="md-media-sm card-media"></div>
+                </md-card-title-media>
+            </md-card-title>
 
-            <div flex-xs layout="row">
-                <canvas id="line" class="chart chart-line" chart-data="data"
-                chart-labels="labels" chart-series="series" chart-options="options"
-                chart-dataset-override="datasetOverride" >
-                </canvas>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="editAthlete()">Redigera</md-button>
+            </md-card-actions>
+        </md-card>
 
-            </div>
+        <!--div flex-xs layout="row">
+            <canvas id="line" class="chart chart-line" chart-data="data"
+            chart-labels="labels" chart-series="series" chart-options="options"
+            chart-dataset-override="datasetOverride" >
+            </canvas>
+
+        </div-->
+    </div>
+    <div flex>
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Nästa träning</span>
+                    <span class="md-">{{selectedAthlete.nextTrainingSession.name}}</h4>
+                    <h5>{{selectedAthlete.nextTrainingSessionDisplay}}</h5>
+                 </md-card-title-text>
+            </md-card-title>
+        </md-card>
     </div>
 
 

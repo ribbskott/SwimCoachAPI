@@ -1,17 +1,19 @@
 __author__ = 'dmczk'
 #!flask/bin/python
 
-from flask import Flask, jsonify, abort, make_response, request, session
+from flask import Flask, jsonify, abort, make_response, request, session, send_from_directory
 from flask.ext.httpauth import HTTPBasicAuth
-from models import Club, User, Session, Profile, Athlete, Group, GroupMember,TrainingResult
+from werkzeug.utils import secure_filename
+from models import Club, User, Session, Profile, Athlete, Group, GroupMember,TrainingResult, UserFile, TrainingSession
 from database import db_session
 from application_cache import ApplicationCache
 from session_manager import SessionManager
 from sloach_object_provider import SloachObjectProvider
+
 from sqlalchemy import or_
 import datetime
 import json
-
+import os
 
 auth = HTTPBasicAuth()
 application_cache  = ApplicationCache()
@@ -19,6 +21,9 @@ application_cache.load_user_cache()
 application_cache.load_active_sessions()
 app = Flask(__name__)
 app.config['SECRET_KEY'] = '?\xbf,\xb4\x8d\xa3"<\x9c\xb0@\x0f5\xab,w\xee\x8d$0\x13\x8b83'
+
+app.config['CLUB_PICTURE_UPLOAD_FOLDER'] = 'static\\Sloach\\userdata\\clubpictures'
+ALLOWED_EXTENSIONS = set(['png', 'jpg', 'jpeg', 'gif'])
 
 @app.before_request
 def make_session_permanent():
@@ -204,9 +209,9 @@ def update_club(idclub):
 @app.route('/clubs/<rowkey>/athletes', methods=['GET'])
 def get_athletes(rowkey):
     if not check_auth(request):
-        abort(403)
+        abort(401)
     if request.method == 'GET':
-        club = application_cache.get_club_by_sessiontoken(request.headers.get['sessiontoken'])
+        club = application_cache.get_club_by_sessiontoken(request.headers.get('sessiontoken'))
         if rowkey != club:
             abort(401)
         athletes = db_session.query(Athlete).filter_by(club=rowkey)
@@ -215,10 +220,78 @@ def get_athletes(rowkey):
         else:
             retAthletes = []
             for athlete in athletes:
-                retAthlete = {'firstname': athlete.firstname, 'lastname': athlete.lastname}
+                retAthlete = {'firstname': athlete.firstname, 'lastname': athlete.lastname, 'id':athlete.id}
                 retAthletes.append(retAthlete)
             return make_response(jsonify({'athletes': retAthletes}))
+    abort(403)
 
+
+@app.route('/clubs/<rowkey>/athletes/<idathlete>/sessions', methods=['GET'])
+def athlete_sessions(rowkey, idathlete):
+    if not check_auth(request):
+        abort(401)
+    if request.method == 'GET':
+        club = application_cache.get_club_by_sessiontoken(request.headers.get('sessiontoken'))
+        if rowkey != club:
+            abort(401)
+        athlete = db_session.query(Athlete).filter_by(club=rowkey,id=idathlete)
+        retSessions = {"athleteSessions": []}
+        if len(list(athlete)) == 0:
+            abort(404)
+        else:
+            training_sessions = db_session.query(TrainingSession)\
+                .join(Group).join(GroupMember).join(Athlete).filter_by(id=idathlete).order_by(TrainingSession.fromtime.desc())
+
+            if len(list(training_sessions)) == 0:
+                abort(404)
+            else:
+                for ts in training_sessions:
+                    retSessions["athleteSessions"].append({"name":ts.name,
+                                        "description": ts.description,
+                                        "fromtime": str(ts.fromtime.isoformat()),
+                                        "totime": str(ts.totime.isoformat()),
+                                        "id": ts.id
+                    })
+
+        return jsonify(retSessions)
+
+def allowed_file(filename):
+    return '.' in filename and \
+           str.lower(filename.rsplit('.', 1)[1]) in ALLOWED_EXTENSIONS
+
+@app.route('/clubs/<rowkey>/picture', methods=['GET','POST'])
+def club_pictures(rowkey):
+    if not check_auth(request):
+        abort(403)
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            return make_response('No file part', 400)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            return make_response('No file part', 400)
+        if not allowed_file(file.filename):
+            return make_response('The filetype is not allowed')
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            filename = rowkey + "." + filename.rsplit('.', 1)[1]
+            file.save(os.path.join(app.config['CLUB_PICTURE_UPLOAD_FOLDER'], filename))
+            db_picture = db_session.query(UserFile).filter_by(owner=rowkey, file_type='ProfilePicture')
+            if len(list(db_picture)) == 0:
+                db_picture = UserFile()
+                db_picture.file_type = 'ProfilePicture'
+                db_picture.owner = rowkey
+                db_session.add(db_picture)
+                db_session.commit()
+                return make_response("",200)
+            db_picture.update({"file_name":filename})
+            db_session.commit()
+            return make_response("", 200)
+    if request.method == 'GET':
+        filename = db_session.query(UserFile).filter_by(file_type='ProfilePicture', owner=rowkey)[0].file_name
+        return jsonify({"filename":  str.replace(app.config['CLUB_PICTURE_UPLOAD_FOLDER'], "static\\Sloach\\", "") + "/" + filename})
 
 @app.route('/athletes/<rowkey>/results', methods=['GET'])
 def get_results(idathlete):
@@ -277,14 +350,14 @@ def verify_password(username, password):
     user.set_password(password)
 
     return user.check_password(password)
-
-@app.route('/session', methods=['GET'])
-def get_userSession():
-    hash = request.headers.get('authorization')
-    str.replace(hash, "Basic", "")
-
-
-    return make_response("hej")
+#
+# @app.route('/session', methods=['GET'])
+# def get_userSession():
+#     hash = request.headers.get('authorization')
+#     str.replace(hash, "Basic", "")
+#
+#
+#     return make_response("hej")
 
 
 @app.route('/users', methods=['POST'])

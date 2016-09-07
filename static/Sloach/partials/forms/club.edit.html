@@ -3,6 +3,13 @@
         <md-whiteframe layout-padding="" layout-margin="" flex="" class="md-whiteframe-2dp vertical-align-top layout-margin layout-padding layout-column flex flex-xs" flex-gt-xs="30" layout="column">
         <div class="padded">
             <div layout-gt-sm="row">
+              <label class="import-file">
+                  <img ng-src="{{clubPictureUrl}}" class="md-card-image" alt="" />
+                  <input type="file" id="clubpic" file-model="clubpicture">
+                <button ng-click="uploadFile()">Ladda upp</button>
+              </label>
+                </div>
+            <div layout-gt-sm="row">
               <md-input-container class="md-block" flex-gt-sm>
                   <label>Namn</label>
                 <input ng-model="club.name">
@@ -40,6 +47,11 @@
                     <input ng-model="club.visitingcity">
                 </md-input-container>
             </div>
+            <label class="import-file">
+                <input type="file" id="clubpic" file-model="clubpicture">
+                <button ng-click="uploadFile()">Ladda upp</button>
+            </label>
+
             <md-button class="md-raised" ng-click="cancelEdit()">Avbryt</md-button>
             <md-button class="md-raised md-primary" ng-click="updateClub()">Spara</md-button>
 

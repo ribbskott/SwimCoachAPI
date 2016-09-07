@@ -4,44 +4,13 @@ angular.module('sloach').controller('athleteCtrl', ['$scope', '$rootScope', '$lo
 
         $scope.setSelectedAthlete = function(){
             $scope.selectedAthlete = $rootScope.selectedAthlete;
+
         }
 
         $scope.cancelEdit = function(){
             $location.path = '/athlete/view'
         }
 
-
-
-        $scope.labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-
-        $scope.series = ['Series A', 'Series B'];
-        //hämta data baserat på träningsresultatstyp
-        $scope.data = [
-            [65, 59, 80, 81, 56, 55, 40],
-            [28, 48, 40, 19, 86, 27, 90]
-          ];
-
-
-        $scope.datasetOverride = [{ yAxisID: 'y-axis-1' }, { yAxisID: 'y-axis-2' }];
-        $scope.options = {
-            scales: {
-              yAxes: [
-                {
-                  id: 'y-axis-1',
-                  type: 'linear',
-                  display: true,
-                  position: 'left'
-                },
-                {
-                  id: 'y-axis-2',
-                  type: 'linear',
-                  display: true,
-                  position: 'right'
-                }
-              ]
-            }
-          };
         $scope.getAthlete = function(){
             var getAthletesPromise = athletes.getAthletes($rootScope.session.profile.clubkey, $scope.selectedAthlete);
             getAthletesPromise.success(function(data, status, headers, config){
@@ -51,8 +20,38 @@ angular.module('sloach').controller('athleteCtrl', ['$scope', '$rootScope', '$lo
             .error(function(data,status,headers,config){
                 alert(JSON.stringify(data));
             });
-        }
+        };
 
+        $scope.nextTrainingSessionDisplay = "";
+
+        $scope.getNextTrainingSession = function(){
+
+            var getNextTrainingSessionPromise = athletes.getNextTrainingSession($rootScope.session.profile.clubkey, $scope.selectedAthlete.id);
+
+
+            getNextTrainingSessionPromise.success(function(data,status, headers, config){
+                $scope.selectedAthlete.trainingSessions = data.athleteSessions;
+                var selectedAthlete = $scope.selectedAthlete;
+                $scope.selectedAthlete.nextTrainingSession = data.athleteSessions.sortBy(function(s){return s.fromtime;})[0];
+                if($scope.selectedAthlete.nextTrainingSession.fromtime > new Date()){
+                    $scope.selectedAthlete.nextTrainingSession.fromtime_readable = moment($scope.selectedAthletenextTrainingSession.fromtime).fromNow();
+                    $scope.selectedAthlete.nextTrainingSession.totime_readable = moment($scope.selectedAthletenextTrainingSession.totime).fromNow();
+
+                    $scope.nextTrainingSessionDisplay = moment($scope.selectedAthlete.nextTrainingSession.fromtime_readable).fromNow() + " - " +
+                                                                moment($scope.selectedAthlete.nextTrainingSession.totime_readable).fromNow();
+                }
+                else{
+                    $scope.selectedAthlete.nextTrainingSession.fromtime_readable = "";
+                    $scope.selectedAthlete.nextTrainingSession.totime_readable = "";
+                    $scope.selectedAthlete.nextTrainingSessionDisplay = "Ingen mer träning :( \nSkapa ett nytt träningspass för gruppen!";
+                }
+
+            })
+            .error(function(data, status, headers, config){
+                alert(JSON.stringify(data));
+            });
+        };
 
         $scope.setSelectedAthlete();
+        $scope.getNextTrainingSession();
 }]);
