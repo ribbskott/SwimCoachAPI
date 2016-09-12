@@ -43,7 +43,7 @@ angular.module('sloach').factory('AthleteService',function($http){
             return $http.post(url, athlete)
         },
         getResultsForAthlete:function(idathlete){
-            var url = "http://localhost:5000/clubs/" + String(clubkey) + "/athletes/" + String(idathlete);
+            var url = "http://localhost:5000/athletes/" + String(idathlete)+ "/results";
             return $http.get(url);
         }
     };

@@ -23,7 +23,8 @@ class ApplicationCache:
         self.session_cache[user_session.sessiontoken] = user_session.iduser
 
     def remove_session_from_cache(self,sessiontoken):
-        del self.session_cache[sessiontoken]
+        if sessiontoken in self.session_cache:
+            del self.session_cache[sessiontoken]
 
     def get_club_by_sessiontoken(self, sessiontoken):
         club = self.user_cache[self.session_cache[sessiontoken]]

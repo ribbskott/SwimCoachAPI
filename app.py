@@ -35,9 +35,7 @@ def check_auth(request):
         return False
 
     sessiontoken = request.headers.get('sessiontoken')
-    cached_session = application_cache .session_cache[sessiontoken]
-    #first check the application cache after the user session
-    if cached_session is not None:
+    if sessiontoken in application_cache.session_cache:
         return True
     #Query the database for the user session
     user_session = SessionManager.get_session(sessiontoken)
@@ -242,9 +240,7 @@ def athlete_sessions(rowkey, idathlete):
             training_sessions = db_session.query(TrainingSession)\
                 .join(Group).join(GroupMember).join(Athlete).filter_by(id=idathlete).order_by(TrainingSession.fromtime.desc())
 
-            if len(list(training_sessions)) == 0:
-                abort(404)
-            else:
+            if len(list(training_sessions)) > 0:
                 for ts in training_sessions:
                     retSessions["athleteSessions"].append({"name":ts.name,
                                         "description": ts.description,
@@ -293,12 +289,32 @@ def club_pictures(rowkey):
         filename = db_session.query(UserFile).filter_by(file_type='ProfilePicture', owner=rowkey)[0].file_name
         return jsonify({"filename":  str.replace(app.config['CLUB_PICTURE_UPLOAD_FOLDER'], "static\\Sloach\\", "") + "/" + filename})
 
-@app.route('/athletes/<rowkey>/results', methods=['GET'])
+@app.route('/athletes/<idathlete>/results', methods=['GET','PUT'])
 def get_results(idathlete):
     if not check_auth(request):
         abort(403)
+    retResults = {"trainingresults": []}
+    if request.method == 'GET':
+        trainingresults = db_session.query(TrainingResult).filter_by(id=idathlete).join(TrainingSession).order_by(TrainingResult.resulttype)
 
-    results = db_session.query_property(TrainingResult).filter_by(id=idathlete)
+        for training_result in trainingresults:
+            retResults["trainingresults"].append({"result_type":training_result.resulttype,
+                               "timeresult": training_result.timeresult,
+                               "achievedonsession":training_result.achievedonsession.id,
+                               "sessionname": training_result.achievedonsession.name,
+                               "achievedondate":str(training_result.achievedonsession.fromtime.isoformat())})
+    if request.method == 'PUT':
+        if not request.json:
+            abort(400)
+        training_result = TrainingResult()
+        training_result.achievedonsession = request.json["trainingsession"]
+        training_result.athlete_id = request.json["athlete"]
+        training_result.resulttype = request.json["resulttype"]
+        training_result.timeresult = request.json["timeresult"]
+
+        db_session.commit()
+
+    return make_response(jsonify(retResults),200)
 
 @app.route('/athletes/<rowkey>/trainingresults',methods=['GET','POST'])
 def get_or_update_trainingresult(rowkey):

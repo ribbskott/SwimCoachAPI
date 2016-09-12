@@ -1,5 +1,5 @@
 <md-content class="md-padding" layout-xs="column" ng-controller="clubCtrl" layout="row">
-    <div flex-xs>
+    <div flex >
         <md-card>
             <md-card-title>
                 <md-card-title-text>
@@ -8,26 +8,54 @@
                     <span class="md-subhead">{{club.postalzipcode}} {{club.postalcity}}</span>
                  </md-card-title-text>
                 <md-card-title-media md-media-sm card-media>
-                    <img ng-src="{{clubPictureUrl}}" class="sm-card-image" alt="">
+                    <img ng-src="{{clubPictureUrl}}" class="sm-card-image" hide-xs alt="">
                 </md-card-title-media>
             </md-card-title>
             <md-card-actions layout="row" layout-align="end center">
                 <md-button ng-click="editClub()">Redigera</md-button>
             </md-card-actions>
         </md-card>
-        </div>
-        <div flex>
-            <md-list class="md-dense" flex>
-            <md-subheader class="md-no-sticky">Simmare</md-subheader>
-            <md-list-item class="md-3-line" ng-repeat="athlete in club.athletes">
-              <!--img ng-src="{{athlete.imgurl}}" class="md-avatar" alt="{{athlete.firstname}} {{athlete.lastname}}" /-->
-              <div class="md-list-item-text" layout="column" ng-click="viewAthlete(athlete)" >
-                <h3>{{ athlete.firstname}} {{athlete.lastname}}</h3>
-                <!--h4>{{ athlete.what }}</h4>
-                <p>{{ item.notes }}</p-->
-              </div>
-            </md-list-item>
-            </md-list>
+    </div>
+    <md-card flex >
 
-        </div>
+        <md-card-content>
+          <md-input-container>
+
+            <input ng-model="search" placeholder="sök simmare">
+          </md-input-container>
+          <h2>Simmare</h2>
+
+          <md-list>
+            <md-item ng-repeat="athlete in club.athletes | filter:search">
+              <md-item-content>
+                <div class="md-tile-left inset" hide-sm>
+                    <user-avatar></user-avatar>
+                </div>
+                <div class="md-list-item-text" ng-click="viewAthlete(athlete)">
+                  <h4>{{athlete.firstname}} {{athlete.lastname}}</h4>
+                  <h5>Gruppnamn</h5>
+                </div>
+              </md-item-content>
+              <md-divider md-inset hide-sm ng-if="!$last"></md-divider>
+              <md-divider hide-gt-sm ng-if="!$last"></md-divider>
+            </md-item>
+            <md-divider></md-divider>
+          </md-list>
+        </md-card-content>
+        </md-card>
+
+    <!--div flex layout-md="row">
+        <md-list class="md-dense" flex>
+        <md-subheader class="md-no-sticky">Simmare</md-subheader>
+        <md-list-item class="md-3-line" ng-repeat="athlete in club.athletes">
+          <!--img ng-src="{{athlete.imgurl}}" class="md-avatar" alt="{{athlete.firstname}} {{athlete.lastname}}" /-->
+          <!--div class="md-list-item-text" layout="column" ng-click="viewAthlete(athlete)" >
+            <h3>{{ athlete.firstname}} {{athlete.lastname}}</h3>
+            <!--h4>{{ athlete.what }}</h4>
+            <p>{{ item.notes }}</p-->
+          <!--/div>
+        </md-list-item>
+        </md-list-->
+
+    </div>
 </md-content>

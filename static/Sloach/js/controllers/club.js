@@ -11,7 +11,7 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$locat
 
     $scope.clubpicture = "";
     $scope.clubPictureUrl = "";
-
+    $scope.search = "";
     var getPicture = function(){
         var uploadUrl = "http:///localhost:5000/clubs/" + $rootScope.session.profile.clubkey + "/picture";
         var getfilePromise = fileUpload.getFile(uploadUrl);

@@ -105,7 +105,9 @@ class TrainingSession(Base):
     totime = Column("totime", DateTime)
     group = Column("group", ForeignKey("group.id"))
     traininggroup = relationship("Group", back_populates="sessions")
+
     results = relationship("TrainingResult", back_populates="achievedonsession")
+    participants = relationship("SessionParticipant", back_populates="trainingsession")
 
     def __repr__(self):
         return '<TrainingSession %r>' % self.name + ' ' + self.fromtime + '-' + self.totime
@@ -142,6 +144,8 @@ class Athlete(Base):
     club = Column("club", UNIQUEIDENTIFIER)
     memberofgroups = relationship("GroupMember", back_populates="athlete")
     results = relationship("TrainingResult",back_populates="athlete")
+    participates = relationship("SessionParticipant", back_populates="athlete")
+
     def __repr__(self):
         return '<Athlete %r>' % self.firstname + ' ' + self.lastname
 
@@ -150,8 +154,16 @@ class TrainingResult(Base):
     id = Column("id", Integer, primary_key=True)
     resulttype = Column("resulttype", Integer)
     athlete_id = Column("athlete_id",ForeignKey("athlete.id"),nullable=False)
-    timeresult = Column("timeresult", Integer) #Result stored in milliseconds
+    timeresult = Column("timeresult_ms", Integer) #Result stored in milliseconds
 
     trainingsession = Column("trainingsession", ForeignKey("trainingsession.id"))
     achievedonsession = relationship("TrainingSession", back_populates="results")
     athlete = relationship("Athlete",back_populates="results")
+
+class SessionParticipant(Base):
+    __tablename__ = "sessionparticipant"
+    id = Column("id", Integer,primary_key=True)
+    athlete_id = Column("athlete_id", ForeignKey("athlete.id"), nullable=False)
+    trainingsession_id = Column("trainingsession", ForeignKey("trainingsession.id"), nullable=False)
+    athlete = relationship("Athlete", back_populates="participates")
+    trainingsession = relationship("TrainingSession", back_populates="participants")

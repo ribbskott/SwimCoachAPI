@@ -30,11 +30,27 @@
                 <md-card-title-text>
                     <span class="md-headline">Nästa träning</span>
                     <span class="md-">{{selectedAthlete.nextTrainingSession.name}}</h4>
-                    <h5>{{selectedAthlete.nextTrainingSessionDisplay}}</h5>
+                    <h5>{{nextTrainingSessionDisplay}}</h5>
                  </md-card-title-text>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="">Administrera gruppen</md-button>
+            </md-card-actions>
+        </md-card>
+    </div>
+    <div layout="row" flex>
+        <md-card>
+            <md-card-title>
+                <md-card-title-text>
+                    <h4>Resultat</h4>
+                </md-card-title-text>
+                <md-card-content>
+                    <canvas id="line" class="chart chart-line" chart-data="graphData"
+                        chart-labels="graphLabels" chart-options="graphOptions">
+                    </canvas>
+                </md-card-content>
             </md-card-title>
         </md-card>
     </div>
-
 
 </md-content>
