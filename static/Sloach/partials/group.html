@@ -1,0 +1,69 @@
+<md-content class="md-padding" layout-xs="row" ng-controller="groupCtrl" layout="column">
+    <div layout-xs="column" layout-gt-xs="row">
+        <md-card flex flex-gt-xs="20">
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">{{group.name}}</span>
+                    <span class="md-subhead">{{group.description}}</span>
+                 </md-card-title-text>
+            </md-card-title>
+            <md-card-actions layout="row" layout-align="end center">
+                <md-button ng-click="editGroup()">Redigera</md-button>
+            </md-card-actions>
+        </md-card>
+        <md-card flex flex-gt-xs="40" layout="column">
+        <md-card-title-text>
+            <span class="md-headline">Simmare</span>
+        </md-card-title-text>
+        <md-card-actions>
+         <md-button class="md-icon-button" aria-label="Add">
+          <md-icon md-svg-icon="img/icons/add.svg"></md-icon>
+         </md-button>
+        </md-card-actions>
+
+
+         <md-card-content>
+            <md-list>
+
+            <md-item ng-repeat="athlete in group.athletes | filter:search">
+              <md-item-content>
+                <div class="md-tile-left inset" hide-sm>
+                    <user-avatar></user-avatar>
+                </div>
+                <div class="md-list-item-text" ng-click="viewAthlete(athlete)">
+                  <h4>{{athlete.firstname}} {{athlete.lastname}}</h4>
+                </div>
+              </md-item-content>
+              <md-divider md-inset hide-sm ng-if="!$last"></md-divider>
+              <md-divider hide-gt-sm ng-if="!$last"></md-divider>
+            </md-item>
+            <md-divider></md-divider>
+          </md-list>
+        </md-card-content>
+        </md-card>
+        <md-card flex >
+            <md-card-title>
+                <md-card-title-text>
+                    <span class="md-headline">Nästa träning</span>
+                    <span class="md-">{{group.nextTrainingSession.name}}</h4>
+                    <h5>{{nextTrainingSessionDisplay}}</h5>
+                 </md-card-title-text>
+            </md-card-title>
+        </md-card>
+    </div>
+    <div flex="30" layout="row" >
+    <md-card flex flex-gt-xs="30" layout="column">
+        <md-card-title-text>
+            <span class="md-headline">Träningspass</span>
+        </md-card-title-text>
+        <md-list>
+          <md-list-item class="md-2-line" ng-repeat="s in group.trainingSessions">
+            <div class="md-list-item-text">
+              <h3>{{s.fromtime | fromNow }}</h3>
+              <p>{{item.description}}</p>
+            </div>
+          </md-list-item>
+        </md-list>
+    </md-card>
+  </div>
+</md-content>

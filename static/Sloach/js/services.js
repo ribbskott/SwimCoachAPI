@@ -1,7 +1,4 @@
 angular.module('sloach').factory('ProfileService', function ($http) {
-
-
-
     return {
         getProfile: function (iduser) {
             if($rootScope && $rootScope.session){
@@ -21,8 +18,6 @@ angular.module('sloach').factory('ProfileService', function ($http) {
             var url = "http://localhost:5000/users/" + String(iduser) + "/profile";
             return $http.post(url, profile);
          }
-
-
     };
 });
 
@@ -49,6 +44,8 @@ angular.module('sloach').factory('AthleteService',function($http){
     };
 });
 
+
+
 angular.module('sloach').factory('ClubService',function($http){
     return{
         getClub: function (rowkey) {
@@ -65,10 +62,21 @@ angular.module('sloach').factory('ClubService',function($http){
             var url = "http://localhost:5000/clubs/" + clubkey + "/picture"
             return $http.post(url,picture);
         }
-
     };
-
 });
+
+
+
+angular.module('sloach').service('TrainingSessionService', function($http){
+    return{
+        getTrainingSession: function(clubkey){
+            var url = "http://localhost:5000/clubs/" + clubkey + "/trainingsessions/"
+            return $http.get(url);
+        },
+
+    }
+});
+
 
 angular.module('sloach').service('fileUpload', ['$http', function ($http) {
     this.uploadFileToUrl = function(file, uploadUrl){
@@ -83,4 +91,6 @@ angular.module('sloach').service('fileUpload', ['$http', function ($http) {
         return $http.get(uploadUrl);
     }
 }]);
+
+
 

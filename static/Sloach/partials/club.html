@@ -1,5 +1,5 @@
 <md-content class="md-padding" layout-xs="column" ng-controller="clubCtrl" layout="row">
-    <div flex >
+    <div flex flex-gt-sm="20">
         <md-card>
             <md-card-title>
                 <md-card-title-text>
@@ -19,11 +19,10 @@
     <md-card flex >
 
         <md-card-content>
-          <md-input-container>
-
-            <input ng-model="search" placeholder="sök simmare">
-          </md-input-container>
           <h2>Simmare</h2>
+            <md-input-container flex>
+            <input flex ng-model="search" placeholder="sök simmare">
+          </md-input-container>
 
           <md-list>
             <md-item ng-repeat="athlete in club.athletes | filter:search">
@@ -34,6 +33,35 @@
                 <div class="md-list-item-text" ng-click="viewAthlete(athlete)">
                   <h4>{{athlete.firstname}} {{athlete.lastname}}</h4>
                   <h5>Gruppnamn</h5>
+                </div>
+              </md-item-content>
+              <md-divider md-inset hide-sm ng-if="!$last"></md-divider>
+              <md-divider hide-gt-sm ng-if="!$last"></md-divider>
+            </md-item>
+            <md-divider></md-divider>
+          </md-list>
+        </md-card-content>
+    </md-card>
+
+
+    <!-- Groups -->
+
+    <md-card flex >
+        <md-card-content>
+          <md-input-container>
+
+            <input ng-model="searchGroup" placeholder="Sök grupp">
+          </md-input-container>
+          <h2>Grupper</h2>
+
+          <md-list>
+            <md-item ng-repeat="group in club.groups | filter:searchGroup">
+              <md-item-content>
+                <div class="md-tile-left inset" hide-sm>
+                    <user-avatar></user-avatar>
+                </div>
+                <div class="md-list-item-text" ng-click="viewGroup(group)">
+                  <h4>{{group.name}}</h4>
                 </div>
               </md-item-content>
               <md-divider md-inset hide-sm ng-if="!$last"></md-divider>

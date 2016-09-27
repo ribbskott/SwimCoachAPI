@@ -43,9 +43,12 @@ angular.module('sloach').controller('athleteCtrl', ['$scope', '$rootScope', '$lo
                                                                 moment($scope.selectedAthlete.nextTrainingSession.totime_readable).fromNow();
                 }
                 else{
-                    $scope.nextTrainingSession.fromtime_readable = "";
-                    $scope.nextTrainingSession.totime_readable = "";
-                    $scope.nextTrainingSessionDisplay = "Ingen mer träning :( \nSkapa ett nytt träningspass för gruppen!";
+                    if(!$scope.nextTrainingSession){
+                        $scope.nextTrainingSession = {"fromtime_readable":null, "totime_readable":null};
+                        $scope.nextTrainingSession.fromtime_readable = "";
+                        $scope.nextTrainingSession.totime_readable = "";
+                        $scope.nextTrainingSessionDisplay = "Ingen mer träning :( \nSkapa ett nytt träningspass för gruppen!";
+                    }
                 }
 
             })

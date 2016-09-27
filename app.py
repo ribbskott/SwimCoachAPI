@@ -3,6 +3,7 @@ __author__ = 'dmczk'
 
 from flask import Flask, jsonify, abort, make_response, request, session, send_from_directory
 from flask.ext.httpauth import HTTPBasicAuth
+
 from werkzeug.utils import secure_filename
 from models import Club, User, Session, Profile, Athlete, Group, GroupMember,TrainingResult, UserFile, TrainingSession
 from database import db_session
@@ -14,6 +15,7 @@ from sqlalchemy import or_
 import datetime
 import json
 import os
+
 
 auth = HTTPBasicAuth()
 application_cache  = ApplicationCache()
@@ -109,6 +111,58 @@ def get_club(rowkey):
                         'visitingzipcode': club.visitingzipcode,
                         'visitingcity': club.visitingcity,
                         'rowkey': club.rowkey})
+
+
+@app.route('/clubs/<string:rowkey>/groups', methods=['GET'])
+def get_groups(rowkey):
+    if not check_auth(request):
+        abort(403)
+    groups = db_session.query(Club).filter_by(rowkey=rowkey).join(Group)
+    if len(list(groups)) == 0:
+        return jsonify({"groups": []})
+
+    retGroups = {"groups": []}
+
+    if request.method =='GET':
+        for group in groups[0].groups:
+            retGroups["groups"].append({"id": group.id, "name": group.name, "description": group.description})
+    return jsonify(retGroups)
+
+
+
+@app.route('/clubs/<string:rowkey>/groups/<int:idgroup>/trainingsessions', methods=['GET'])
+def get_sessions_for_group(rowkey,idgroup):
+    if not check_auth(request):
+        abort(403)
+    sessions = db_session.query(TrainingSession).filter_by(group=idgroup)
+    retSessions = {"groupSessions": []}
+    for training_session in sessions:
+        retSessions["groupSessions"].append(training_session.to_json())
+        #"group": training_session.group,
+         #                                    "name": training_session.name,
+         #                                    "fromtime": str(training_session.fromtime.isoformat()),
+         #                                     "totime": str(training_session.totime.isoformat()),
+         #                                    "id": training_session.id
+         #                                    })
+
+    return jsonify(retSessions)
+
+@app.route('/clubs/<string:rowkey>/groups/<int:idgroup>/athletes', methods=['GET'])
+def get_athletes_in_group(rowkey, idgroup):
+    if not check_auth(request):
+        abort(403)
+    athletes = db_session.query(Club).filter_by(rowkey=rowkey).join(Group).filter_by(id=idgroup).\
+                join(GroupMember).join(Athlete)
+    retAthletes = {"athletes": []}
+    if len(list(athletes)) == 0:
+        return jsonify(retAthletes)
+    if request.method != 'GET':
+        abort(405)
+    if request.method =='GET':
+        for athlete in athletes[0].groups[0].members:
+            retAthletes["athletes"].append(athlete.athlete.to_json())
+
+    return json.dumps(retAthletes)
 
 
 @app.route('/signup', methods=['POST'])
@@ -212,7 +266,7 @@ def get_athletes(rowkey):
         club = application_cache.get_club_by_sessiontoken(request.headers.get('sessiontoken'))
         if rowkey != club:
             abort(401)
-        athletes = db_session.query(Athlete).filter_by(club=rowkey)
+        athletes = db_session.query(Athlete).filter_by(club=rowkey).join(GroupMember).join(Group)
         if len(list(athletes)) == 0:
             abort(404)
         else:
@@ -316,13 +370,6 @@ def get_results(idathlete):
 
     return make_response(jsonify(retResults),200)
 
-@app.route('/athletes/<rowkey>/trainingresults',methods=['GET','POST'])
-def get_or_update_trainingresult(rowkey):
-    if not check_auth(request):
-        abort(403)
-
-
-
 @app.route('/users/<int:iduser>/profile', methods=['GET', 'POST'])
 def get_profile(iduser):
     if not check_auth(request):
@@ -345,12 +392,8 @@ def get_profile(iduser):
     else:
         return make_response(jsonify(profile), 200)
 
-# USER BEGIN
-# USER END
-
 
 # AUTH
-
 @auth.error_handler
 def unauthorized():
     return make_response(jsonify({'error': 'Unauthorized access'}), 401)
@@ -366,45 +409,6 @@ def verify_password(username, password):
     user.set_password(password)
 
     return user.check_password(password)
-#
-# @app.route('/session', methods=['GET'])
-# def get_userSession():
-#     hash = request.headers.get('authorization')
-#     str.replace(hash, "Basic", "")
-#
-#
-#     return make_response("hej")
-
-
-@app.route('/users', methods=['POST'])
-def new_user():
-    password = request.json.get('password')
-    email = request.json.get('email')
-    if password is None or password == "":
-        abort(400, {'message': 'Password is required'})
-    if email is None or email == "":
-    #    # missing arguments
-        abort(400, {'message': 'Email is required'})
-    if db_session.query(User).filter_by(username=username).first() is not None:
-        # existing user
-        # print("User exists already!!!")
-        abort(400, {'message': 'User already exists'})
-    user = User(username=username, email=email)
-    user.set_password(password)
-
-    db_session.add(user)
-    db_session.commit()
-
-    return jsonify({'username': user.username}), 201
-
-#@auth.error_handler
-#def unauthorized():
-#    return make_response(jsonify({'error': 'Unauthorized access'}), 401)
-
-#@app.errorhandler(400)
-#def custom400(error):
-#    return make_response(jsonify({'message': error.description['message']}), 400)
-
 
 
 @app.teardown_appcontext

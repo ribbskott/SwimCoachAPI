@@ -1,4 +1,4 @@
-angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$location', 'ClubService','AthleteService', 'fileUpload', function($scope, $rootScope, $location, clubs, athletes, fileUpload){
+angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$location', 'ClubService','AthleteService', 'fileUpload', 'GroupService', function($scope, $rootScope, $location, clubs, athletes, fileUpload, groups){
 
     $scope.profile = $rootScope.session.profile;
 
@@ -23,6 +23,13 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$locat
 
     };
 
+    $scope.groups = {};
+
+    $scope.viewGroup = function(group){
+        $rootScope.selectedGroup = group;
+        $location.path('/group/view');
+    }
+
     $scope.viewAthlete = function(athlete){
         $rootScope.selectedAthlete = athlete;
         $location.path('/athlete/view');
@@ -42,6 +49,7 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$locat
         getClubPromise.success(function (data, status, headers, config) {
                 $rootScope.club = data;
                 $scope.getAthletes();
+                $scope.getGroups();
             })
             .error(function(data, status,headers,config){
                 alert(JSON.stringify(data));
@@ -85,6 +93,17 @@ angular.module('sloach').controller('clubCtrl', ['$scope', '$rootScope', '$locat
 
         })
 
+    };
+
+    $scope.getGroups = function(){
+        var getGroupsPromise = groups.getGroups($rootScope.session.profile.clubkey);
+        getGroupsPromise.success(function(data,status, header, config){
+            $rootScope.club.groups = data.groups;
+
+        })
+        .error(function(data, status, header, config){
+            alert(data);
+       })
     };
 
     if($rootScope.club === undefined){

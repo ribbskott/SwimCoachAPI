@@ -4,6 +4,8 @@ from sqlalchemy.dialects.mssql import UNIQUEIDENTIFIER
 from sqlalchemy.orm import relationship
 from database import Base
 import uuid
+
+from flask import jsonify
 import datetime
 from werkzeug.security import generate_password_hash, \
      check_password_hash
@@ -26,8 +28,15 @@ class Club(Base):
     groups = relationship("Group",back_populates="club")
     profile_picture = Column("profilepicture", Integer)
 
-
-
+    def to_json(self):
+        return jsonify({"name": self.name,
+                        "description": self.description,
+                        "postaladdress": self.postaladdress,
+                        "postalzipcode": self.postalzipcode,
+                        "visitingaddress": self.visitingaddress,
+                        "visitingzipcode": self.visitingzipcode,
+                        "visitingcity": self.visitingcity,
+                        "rowkey": self.rowkey})
     def __init__(self, name=None, description=None):
         self.name = name
         self.description = description
@@ -109,6 +118,9 @@ class TrainingSession(Base):
     results = relationship("TrainingResult", back_populates="achievedonsession")
     participants = relationship("SessionParticipant", back_populates="trainingsession")
 
+    def to_json(self):
+        return jsonify({"id": self.id, "name": self.name,"description": self.description, "fromtime":str(self.fromtime), "totime": str(self.totime)})
+
     def __repr__(self):
         return '<TrainingSession %r>' % self.name + ' ' + self.fromtime + '-' + self.totime
 
@@ -131,6 +143,9 @@ class Group(Base):
     club = relationship("Club", back_populates="groups")
     sessions = relationship("TrainingSession", back_populates="traininggroup")
 
+    def to_json(self):
+        return jsonify({"id": self.id, "name": self.name, "description": self.description})
+
     def __repr__(self):
         return '<Group %r>' % self.name
 
@@ -146,8 +161,11 @@ class Athlete(Base):
     results = relationship("TrainingResult",back_populates="athlete")
     participates = relationship("SessionParticipant", back_populates="athlete")
 
+    def to_json(self):
+        return {"id": self.id, "firstname": self.firstname, "lastname": self.lastname, "dateofbirth": str(self.dateofbirth.isoformat())}
+
     def __repr__(self):
-        return '<Athlete %r>' % self.firstname + ' ' + self.lastname
+        return '<Athlete %r>' % self.firstname
 
 class TrainingResult(Base):
     __tablename__ = "trainingresult"

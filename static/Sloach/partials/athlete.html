@@ -4,7 +4,7 @@
             <md-card-title>
                 <md-card-title-text>
                     <span class="md-headline">{{selectedAthlete.firstname}} {{selectedAthlete.lastname}}</span>
-                    <span class="md-subhead">Gruppnamn</span>
+                    <span class="md-subhead" ng-click="showGroup()">{{selectedAthlete.groupName}}</span>
                  </md-card-title-text>
                 <md-card-title-media>
                     <div class="md-media-sm card-media"></div>
@@ -34,7 +34,7 @@
                  </md-card-title-text>
             </md-card-title>
             <md-card-actions layout="row" layout-align="end center">
-                <md-button ng-click="">Administrera gruppen</md-button>
+                <md-button ng-click="">Lägg till träningspass</md-button>
             </md-card-actions>
         </md-card>
     </div>
